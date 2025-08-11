@@ -39,7 +39,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'User created successfully',
-            'created_at' => $user->created_at,
+            'created_at' => $user->created_at->format('Y-m-d H:i:s'),
             'token' => $token,
         ], 201)->withCookie(
             cookie(
@@ -52,7 +52,6 @@ class AuthController extends Controller
                 true,
                 false,
                 'Lax'));
-
     }
 
     public function login(Request $request): JsonResponse
@@ -61,8 +60,12 @@ class AuthController extends Controller
 
         if (!Auth::attempt($credentials)) {
             return response()->json([
-                'success' => false,
-                'message' => 'Invalid credentials',
+                'errors' => [
+                    'success' => false,
+                    'requestAt' => now()->format('Y-m-d H:i:s'),
+                    'httpStatus' => 'BAD_REQUEST',
+                    'message' => 'Invalid credentials',
+                ]
             ], 401);
         }
 
@@ -81,8 +84,11 @@ class AuthController extends Controller
         */
 
         return response()->json([
+            'requestAt' => now()->format('Y-m-d H:i:s'),
             'success' => true,
-            'user' => $user->only('id', 'name', 'email', 'role'),
+            'httpStatus' => 'OK',
+            'message' => 'Login successfull, Welcome!',
+            'data' => $user->only('name', 'email'),
         ])->withCookie(cookie(
             'api_token',
             $token,
