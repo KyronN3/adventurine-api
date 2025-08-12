@@ -40,7 +40,6 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'User created successfully',
             'created_at' => $user->created_at->format('Y-m-d H:i:s'),
-            'token' => $token,
         ], 201)->withCookie(
             cookie(
                 'api_token',
@@ -98,7 +97,7 @@ class AuthController extends Controller
             true,
             true,
             false,
-            'Strict'));
+            'Lax'));
     }
 
     public function logout(Request $request): JsonResponse

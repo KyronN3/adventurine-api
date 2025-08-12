@@ -34,4 +34,15 @@ class RegisterUserRequest extends FormRequest
 
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'name' => $this->input('fullname'),
+            'email' => $this->input('email'),
+            'role' => $this->input('role'),
+            'password' => $this->input('password'),
+            'password_confirmation' => $this->input('passwordConfirmation')
+        ]);
+    }
 }
