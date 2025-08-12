@@ -28,29 +28,11 @@ class AuthController extends Controller
         // spatie-permission assigning Roles |||  Check spatie Docs. ❤️❤️❤️
         $user->assignRole($request->validated()['role']);
 
-        $token = $user->createToken(
-            Str::lower($request->validated()['name']) . '_auth_token', ['*'],
-            now()->addDays(7))
-            ->plainTextToken;
-
-        /*
-         * Storing token in Cookie
-        */
         return response()->json([
             'success' => true,
             'message' => 'User created successfully',
             'created_at' => $user->created_at->format('Y-m-d H:i:s'),
-        ], 201)->withCookie(
-            cookie(
-                'api_token',
-                $token,
-                7 * 24 * 60, // 7 days expiration same as the Token Above line 30 ❤️❤️❤️
-                '/',
-                null,
-                true,
-                true,
-                false,
-                'Lax'));
+        ], 201);
     }
 
     public function login(Request $request): JsonResponse
@@ -97,7 +79,7 @@ class AuthController extends Controller
             true,
             true,
             false,
-            'Lax'));
+            'None'));
     }
 
     public function logout(Request $request): JsonResponse

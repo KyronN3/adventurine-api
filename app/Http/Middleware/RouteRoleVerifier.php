@@ -23,7 +23,7 @@ class RouteRoleVerifier
                 json_decode($response->content(), true), [
                 'authentication' => [
                     'success' => false,
-                    'message' => 'Unauthenticated.',
+                    'message' => 'Unauthenticated',
                 ],
             ]), 401);
         }
