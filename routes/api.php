@@ -28,15 +28,20 @@ Route::prefix('v1')->group(function () {
 
     // Future: Strictly role base access here
     Route::prefix('/admin')->group(function () {
-        Route::post('/recognition/create', [RecognitionController::class, 'createNewRecognition'])
-            ->withoutMiddleware(['auth:sanctum', 'route-role-verifier']); // skip for testing only
+        Route::prefix('/recognition')->group(function () {
+            Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
+            Route::post('/delete/{id}', [RecognitionController::class, 'deletePendingRecognition']);
+            Route::put('/approve/{id}', [RecognitionController::class, 'approveRecognition']);
+            Route::put('/reject/{id}', [RecognitionController::class, 'rejectRecognition']);;
+        });
     });
+
     Route::prefix('/recognition')->group(function () {
         Route::get('search/all', [RecognitionController::class, 'getRecognitions']);
-        Route::get('search/{id}', [RecognitionController::class, 'getRecognitionById']);
+        Route::get('search/history', [RecognitionController::class, 'getRecognitionHistory']);
+        Route::get('search/{id}', [RecognitionController::class, 'getRecognitionById'])
+            ->where('id', '[0-9]+');
         Route::get('search/department/{department}', [RecognitionController::class, 'getRecognitionsByDepartment']);
-        Route::get('search/recent', [RecognitionController::class, 'getRecognitionRecent']);;
-        Route::get('search/history', [RecognitionController::class, 'getRecognitionHistory']);;
     });
 });
 

@@ -38,4 +38,30 @@ class Recognition extends Model
         return $this->hasMany(RecognitionImage::class, 'recognition_id', 'id');
     }
 
+
+    public function toApproved(): static
+    {
+        return $this->setAttribute('status', 'approved');
+    }
+
+    public function toRejected(): static
+    {
+        return $this->setAttribute('status', 'rejected');
+    }
+
+    public function isPending(): bool
+    {
+        return strtolower($this->getAttribute('status')) === 'pending';
+    }
+
+    public function isApproved(): bool
+    {
+        return strtolower($this->getAttribute('status')) === 'approved';
+    }
+
+    public function isRejected(): bool
+    {
+        return strtolower($this->getAttribute('status')) === 'rejected';
+    }
+
 }
