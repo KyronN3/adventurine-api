@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 class LogMessages
 {
     // FOR RECOGNITION
-    public static function recognition(RecognitionFunction $function, LogLevel $log, LayerLevel $layer, $recognition = null): void
+    public static function recognition(RecognitionFunction $function, LayerLevel $layer,  LogLevel $log, $recognition = null): void
     {
         if ($recognition instanceof \Exception) {
             $context = [
