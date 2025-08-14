@@ -1,10 +1,9 @@
 <?php
 
-namespace App\service;
+namespace App\Services;
 
 class EventService
 {
-
 
     public function createNewEvent() {
 
