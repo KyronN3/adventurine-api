@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Recognition  extends Model
+class Recognition extends Model
 {
     use HasFactory;
 
+    protected $table = 'recognitions'; // your DB table name
+
     protected $fillable = [
-        'id',
         'status',
         'hr_comment',
         'date_submitted',
@@ -22,6 +23,10 @@ class Recognition  extends Model
         'achievement_description',
     ];
 
+    protected $casts = [
+        'date_submitted' => 'date',
+        'recognition_date' => 'date'
+    ];
 
     public function files()
     {
