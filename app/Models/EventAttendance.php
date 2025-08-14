@@ -1,28 +1,31 @@
 <?php
 
-    namespace App\Models;
+namespace App\Models;
 
-    use Illuminate\Database\Eloquent\Factories\HasFactory;
-    use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-    class EventAttendance extends Model {
-        use HasFactory;
+class EventAttendance extends Model
+{
+    use HasFactory;
 
-        protected $fillable = [
-            'event_id',
-            'name',
-            'email',
-            'status',
-            'check_in',
-            'notes',
-        ];
+    protected $table = 'event_attendance';
 
-        protected $casts = [
-            'check_in' => 'datetime',
-        ];
+    protected $fillable = [
+        'event_id',
+        'name',
+        'email',
+        'status',
+        'check_in',
+        'notes',
+    ];
 
-        public function event()
-        {
-            return $this->belongsTo(Event::class, 'event_id', 'id');
-        }
+    protected $casts = [
+        'check_in' => 'datetime',
+    ];
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id');
     }
+}

@@ -9,6 +9,8 @@ class EventOutcome extends Model
 {
     use HasFactory;
 
+    protected $table = 'event_outcomes';
+
     protected $fillable = [
         'event_id',
         'title',
@@ -17,6 +19,6 @@ class EventOutcome extends Model
 
     public function event()
     {
-        return $this->belongsTo(Event::class, 'event_id', 'id');
+        return $this->belongsTo(Event::class, 'event_id');
     }
 }
