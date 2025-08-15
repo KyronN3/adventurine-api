@@ -3,11 +3,7 @@
 namespace App\Services;
 
 use App\Components\enum\MinioBucket;
-use Illuminate\Support\Facades\Storage;
-
 use Aws\S3\S3Client;
-use Aws\Exception\AwsException;
-
 
 class MinioService
 {
@@ -36,6 +32,33 @@ class MinioService
         return (string)$request->getUri();
     }
 
+    public function generateViewUrl(string $fileName, MinioBucket $bucket): array
+    {
+        $client = $this->getS3Client();
+
+        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $contentType = match($extension) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'pdf' => 'application/pdf',
+            default => 'application/octet-stream',
+        };
+
+        $cmd = $client->getCommand('GetObject', [
+            'Bucket' => $bucket->value,
+            'Key' => $fileName,
+            'ResponseContentDisposition' => 'inline',
+            'ResponseContentType' => $contentType, // important for browser preview
+        ]);
+
+        $expires = new \DateTime("+12 hours"); // actual expiration datetime
+        $request = $client->createPresignedRequest($cmd, $expires);
+
+        return [
+            'url' => (string)$request->getUri(),
+            'expires' => $expires->format('Y-m-d H:i:s'),];
+    }
 
     public function fileNameConvert(string $fileName, int|string $id): string
     {
