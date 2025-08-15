@@ -27,11 +27,21 @@ class RecognitionService
 
         try {
             $recognition = Recognition::create($data);
-            LogMessages::recognition(RecognitionFunction::CREATION, LogLevel::INFO, LayerLevel::SERVICE, $recognition);
+
+            LogMessages::recognition(
+                RecognitionFunction::CREATION,
+                LayerLevel::SERVICE,
+                LogLevel::INFO,
+                $recognition);
 
             return (string)$recognition->id;
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::CREATION, LogLevel::ERROR, LayerLevel::SERVICE, $e);
+            LogMessages::recognition(
+                RecognitionFunction::CREATION,
+                LayerLevel::SERVICE,
+                LogLevel::ERROR,
+                $e);
+
             throw new RecognitionServiceException(
                 "Error creating new recognition.",
                 $e->getMessage(),
@@ -43,25 +53,121 @@ class RecognitionService
     /**
      * @throws RecognitionServiceException
      */
+    // Delete pending recognition
+    // Check recognition if currently pending
+    // Console logs after action
+    // Delete it, return error otherwise not
     public function deletePendingRecognition($id): void
     {
+        $recognition = Recognition::find($id);
+
+        if (!$recognition)
+            throw new RecognitionServiceException("Recognition not found.");
+
+        if (!$recognition->isPending())
+            throw new RecognitionServiceException("Recognition is already {$recognition->status} and cannot be deleted.");
+
         try {
-            $recognition = Recognition::find($id);
-
-            if (!$recognition) {
-                throw new RecognitionServiceException("Recognition not found.");
-            }
-
-            if ($recognition->status != 'pending' || $recognition->status != 'PENDING') {
-                throw new RecognitionServiceException("Recognition is not pending.");
-            }
-
             $recognition->delete();
-            LogMessages::recognition(RecognitionFunction::DELETE_PENDING, LogLevel::INFO, LayerLevel::SERVICE, $recognition);
+
+            LogMessages::recognition(
+                RecognitionFunction::DELETE_PENDING,
+                LayerLevel::SERVICE,
+                LogLevel::INFO,
+                $recognition);
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::DELETE_PENDING, LogLevel::ERROR, LayerLevel::SERVICE, $e);
+            LogMessages::recognition(
+                RecognitionFunction::DELETE_PENDING,
+                LayerLevel::SERVICE,
+                LogLevel::ERROR,
+                $e);
+
             throw new RecognitionServiceException(
                 "Error deleting pending recognition.",
+                $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+    }
+
+    /**
+     * @throws RecognitionServiceException
+     */
+    // Approve pending recognition
+    // Check recognition if currently pending
+    // Console logs after action
+    // Update to approve, return error otherwise not
+    public function approvePendingRecognition($id): void
+    {
+        $recognition = Recognition::find($id);
+
+        if ($recognition === null)
+            throw new RecognitionServiceException("Recognition not found.");
+
+        if (!$recognition->isPending())
+            throw new RecognitionServiceException("Recognition is already {$recognition->status} and cannot be approved.");
+
+        try {
+            $recognition->toApproved();
+            $recognition->save();
+
+            LogMessages::recognition(
+                RecognitionFunction::APPROVES,
+                LayerLevel::SERVICE,
+                LogLevel::INFO,
+                $recognition);
+        } catch (\Exception $e) {
+            LogMessages::recognition(
+                RecognitionFunction::APPROVES,
+                LayerLevel::SERVICE,
+                LogLevel::ERROR,
+                $e);
+
+            throw new RecognitionServiceException(
+                "Error approving recognition.",
+                $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
+    }
+
+    /**
+     * @throws RecognitionServiceException
+     */
+    // Approve pending recognition
+    // Check recognition if currently pending
+    // Console logs after action
+    // Update to approve, return error otherwise not
+    public function rejectPendingRecognition($id): void
+    {
+        $recognition = Recognition::find($id);
+
+        if (!$recognition)
+            throw new RecognitionServiceException("Recognition not found.");
+
+        if ($recognition->isApproved() || $recognition->isRejected())
+            throw new RecognitionServiceException("Recognition is already {$recognition->status} and cannot be rejected.");
+
+        try {
+            $recognition->toRejected();
+            $recognition->save();
+
+            LogMessages::recognition(
+                RecognitionFunction::REJECTS,
+                LayerLevel::SERVICE,
+                LogLevel::INFO,
+                $recognition);
+        } catch (\Exception $e) {
+            LogMessages::recognition(
+                RecognitionFunction::REJECTS,
+                LayerLevel::SERVICE,
+                LogLevel::ERROR,
+                $e);
+
+            throw new RecognitionServiceException(
+                "Error rejecting recognition.",
                 $e->getMessage(),
                 $e->getCode(),
                 $e
