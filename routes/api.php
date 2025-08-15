@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EventController;   
 
 /*
     * Welcome Message
@@ -24,6 +25,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
+      
     });
 
     // Future: Strictly role base access here
@@ -31,6 +33,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/recognition/create', [RecognitionController::class, 'createNewRecognition'])
             ->withoutMiddleware(['auth:sanctum', 'route-role-verifier']); // skip for testing only
     });
+    
     Route::prefix('/recognition')->group(function () {
         Route::get('search/all', [RecognitionController::class, 'getRecognitions']);
         Route::get('search/{id}', [RecognitionController::class, 'getRecognitionById']);
@@ -39,7 +42,20 @@ Route::prefix('v1')->group(function () {
         Route::get('search/history', [RecognitionController::class, 'getRecognitionHistory']);;
     });
 
+    
+    Route::prefix('/hr')->group(function () {
+        Route::post('/event/create', [EventController::class, 'createNewEvent']);
+        Route::put('/event/{event}', [EventController::class, 'update']);
+        Route::delete('/event/{event}', [EventController::class, 'destroy']);
+    });
 
+    
+    Route::prefix('/event')->group(function () {
+        Route::get('search/all', [EventController::class, 'getEvents']);
+        Route::get('search/{id}', [EventController::class, 'getEventById']);
+        Route::get('search/status', [EventController::class, 'getEventsByStatus']);
+        Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
+        Route::get('search/past', [EventController::class, 'getPastEvents']);
+        Route::get('{event}', [EventController::class, 'show']);
+    });
 });
-
-

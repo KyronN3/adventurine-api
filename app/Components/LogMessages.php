@@ -31,13 +31,13 @@ class LogMessages
 
         switch ($log) {
             case LogLevel::INFO:
-                Log::info("Recognition " . $function->value . " successfully in " . $layer->value . " layer.", $context);
+                Log::info("Recognition " . $function->value . " successfully in " . $layer->value . " layer.", $context || '');
                 break;
             case LogLevel::ERROR:
-                Log::error("Recognition " . $function->value . " failed in " . $layer->value . " layer.", $context);
+                Log::error("Recognition " . $function->value . " failed in " . $layer->value . " layer.", $context || '');
                 break;
             case LogLevel::WARNING:
-                Log::warning("Recognition " . $function->value . " warning in" . $layer->value . " layer.", $context);
+                Log::warning("Recognition " . $function->value . " warning in" . $layer->value . " layer.", $context || '');
                 break;
         }
     }
