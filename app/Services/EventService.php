@@ -39,10 +39,29 @@ class EventService
             DB::beginTransaction();
             
             
+            $existingEvent = Event::where('event_name', $data['event_name'])
+                ->where('event_date', $data['event_date'])
+                ->where('event_venue', $data['event_venue'])
+                ->first();
+            
+            if ($existingEvent) {
+                DB::rollBack();
+                throw new EventServiceException('Event already exists with the same name, date, and venue. Please check the existing event or modify your event details.');
+            }
+            
+            
+            $sameNameDateEvent = Event::where('event_name', $data['event_name'])
+                ->where('event_date', $data['event_date'])
+                ->first();
+            
+            if ($sameNameDateEvent) {
+                DB::rollBack();
+                throw new EventServiceException('An event with the same name and date already exists. Please choose a different name or date.');
+            }
+            
             $data['event_created'] = now()->format('Y-m-d');
             $data['event_status'] = $data['event_status'] ?? 'active';
             
-          
             $event = Event::create($data);
             
             DB::commit();
@@ -147,6 +166,39 @@ class EventService
                 ->get();
         } catch (\Exception $e) {
             throw new EventServiceException('Failed to search events: ' . $e->getMessage());
+        }
+    }
+
+   
+    public function checkEventExists($eventName, $eventDate, $eventVenue = null)
+    {
+        try {
+            $query = Event::where('event_name', $eventName)
+                ->where('event_date', $eventDate);
+            
+            if ($eventVenue) {
+                $query->where('event_venue', $eventVenue);
+            }
+            
+            $existingEvent = $query->first();
+            
+            if ($existingEvent) {
+                return [
+                    'exists' => true,
+                    'event' => $existingEvent,
+                    'message' => $eventVenue 
+                        ? 'Event already exists with the same name, date, and venue.'
+                        : 'An event with the same name and date already exists.'
+                ];
+            }
+            
+            return [
+                'exists' => false,
+                'event' => null,
+                'message' => 'No duplicate event found.'
+            ];
+        } catch (\Exception $e) {
+            throw new EventServiceException('Failed to check for existing events: ' . $e->getMessage());
         }
     }
 }
