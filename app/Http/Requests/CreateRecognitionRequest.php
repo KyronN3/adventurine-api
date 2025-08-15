@@ -20,6 +20,8 @@ class CreateRecognitionRequest extends FormRequest
             'recognition_date' => $this->input('recognitionDate'),
             'recognition_type' => $this->input('recognitionType'),
             'achievement_description' => $this->input('achievementDescription'),
+            'images' => $this->input('images', []),
+            'files' => $this->input('files', []),
         ]);
     }
 
@@ -32,6 +34,12 @@ class CreateRecognitionRequest extends FormRequest
             'recognition_date' => ['required', 'date_format:Y-m-d'],
             'recognition_type' => ['required', 'string', 'max:100'],
             'achievement_description' => ['required', 'string', 'max:1000'],
+
+            // New rules for arrays of file names
+            'images' => ['array'],                     // must be an array
+            'images.*' => ['string', 'max:255'],       // each element is a string
+            'files' => ['array'],
+            'files.*' => ['string', 'max:255'],
         ];
     }
 
@@ -49,6 +57,11 @@ class CreateRecognitionRequest extends FormRequest
 
             'recognition_type.required' => 'Recognition Type is required',
             'achievement_description.required' => 'Achievement Description is required',
+
+            'images.array' => 'Images must be an array',
+            'images.*.string' => 'Each image name must be a string',
+            'files.array' => 'Files must be an array',
+            'files.*.string' => 'Each file name must be a string',
         ];
     }
 }

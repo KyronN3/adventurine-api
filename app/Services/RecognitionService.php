@@ -4,29 +4,74 @@ namespace App\Services;
 
 use App\Components\enum\LayerLevel;
 use App\Components\enum\LogLevel;
+use App\Components\enum\MinioBucket;
 use App\Components\enum\RecognitionFunction;
 use App\Components\LogMessages;
 use App\Exceptions\RecognitionServiceException;
 use App\Models\Recognition;
+use Illuminate\Support\Facades\DB;
 
 class RecognitionService
 {
+    protected MinioService $minioService;
+
+    public function __construct(MinioService $minioService)
+    {
+        $this->minioService = $minioService;
+    }
+
     /**
      * @throws RecognitionServiceException
      */
-    // Creates new recognition
-    // Overrides status and date
-    // Save to DB using Model ORM
-    // Console logs after action
-    // Returns recognition id if success, throw otherwise
-    public function createNewRecognition(array $data): string
+//     Creates new recognition. Use Transaction for Atomicity
+//     Foreach loops for images and files to generate key and save to db
+//     Generate all with presign upload url
+//     Console logs after action
+//     Returns with id and presign urls if success, throw error if fail
+    public function createNewRecognition(array $data): array
     {
         // Override status and date submitted
         $data['status'] = $data['status'] ?? 'pending';
         $data['date_submitted'] = $data['date_submitted'] ?? now();
 
+        DB::beginTransaction();
+
         try {
             $recognition = Recognition::create($data);
+
+            $imageKeys = [];
+            $fileKeys = [];
+
+            if (!empty($data['images'])) {
+                foreach ($data['images'] as $imageName) {
+                    $key = $this->minioService->fileNameConvert($imageName, $recognition->id);
+                    $recognition->images()->create(['image_name' => $key]);
+                    $imageKeys[] = $key;
+                }
+            }
+
+            if (!empty($data['files'])) {
+                foreach ($data['files'] as $fileName) {
+                    $key = $this->minioService->fileNameConvert($fileName, $recognition->id);
+                    $recognition->files()->create(['file_name' => $key]);
+                    $fileKeys[] = $key;
+                }
+            }
+
+            // generate presign urls
+            $imageUrls = [];
+            $fileUrls = [];
+
+            foreach ($imageKeys as $key) {
+                $imageUrls[] = $this->minioService->generateUploadUrl($key, MinioBucket::RECOGNITION_IMAGE);
+            }
+
+            foreach ($fileKeys as $key) {
+                $fileUrls[] = $this->minioService->generateUploadUrl($key, MinioBucket::RECOGNITION_FILE);
+            }
+
+            // Commit DB transactions
+            DB::commit();
 
             LogMessages::recognition(
                 RecognitionFunction::CREATION,
@@ -34,8 +79,15 @@ class RecognitionService
                 LogLevel::INFO,
                 $recognition);
 
-            return (string)$recognition->id;
+            return [
+                'recognition_id' => $recognition->id,
+                'images' => $imageUrls,
+                'files' => $fileUrls,
+            ];
+
         } catch (\Exception $e) {
+            DB::rollBack();
+
             LogMessages::recognition(
                 RecognitionFunction::CREATION,
                 LayerLevel::SERVICE,
@@ -49,6 +101,9 @@ class RecognitionService
                 $e);
         }
     }
+
+
+
 
     /**
      * @throws RecognitionServiceException
