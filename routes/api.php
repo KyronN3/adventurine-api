@@ -52,13 +52,14 @@ Route::prefix('v1')->group(function () {
     Route::prefix('/hr')->group(function () {
         Route::post('/event/create', [EventController::class, 'createNewEvent']);
         Route::put('/event/{event}', [EventController::class, 'update']);
-        Route::delete('/event/{event}', [EventController::class, 'destroy']);
+        Route::delete('/event/{event}', [EventController::class, 'deleteEventById']);
     });
 
     
     Route::prefix('/event')->group(function () {
         Route::get('search/all', [EventController::class, 'getEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
+        Route::get('search/name', [EventController::class, 'searchEventsName']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
         Route::get('search/past', [EventController::class, 'getPastEvents']);
