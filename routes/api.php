@@ -56,13 +56,13 @@ Route::prefix('v1')->group(function () {
     });
 
     
-    Route::prefix('/event')->group(function () {
+     Route::prefix('/event')->group(function () {
         Route::get('search/all', [EventController::class, 'getEvents']);
-        Route::get('search/{id}', [EventController::class, 'getEventById']);
+        Route::get('search/{id}', [EventController::class, 'getEventById'])->where('id', '[0-9]+');
         Route::get('search/name', [EventController::class, 'searchEventsName']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
         Route::get('search/past', [EventController::class, 'getPastEvents']);
-        Route::get('{event}', [EventController::class, 'show']);
+        Route::get('{event}', [EventController::class, 'show'])->where('event', '[0-9]+');
     });
 });
