@@ -3,7 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EventController;   
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\BpmController;
 
 /*
     * Welcome Message
@@ -63,5 +64,11 @@ Route::prefix('v1')->group(function () {
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
         Route::get('search/past', [EventController::class, 'getPastEvents']);
         Route::get('{event}', [EventController::class, 'show']);
+    });
+
+    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
+    Route::prefix('/bpm')->group(function () {
+        Route::get('', [BpmController::class, 'getBpm']);
+        Route::post('/bpm/create', [BpmController::class, 'store']);
     });
 });

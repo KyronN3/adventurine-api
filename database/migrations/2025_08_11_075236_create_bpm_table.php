@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('bpm', function (Blueprint $table) {
             $table->id();
+            $table->string('employee_name');
+            $table->string('employee_department');
+            $table->integer('bpm_systolic');
+            $table->integer('bpm_diastolic');
+            $table->date('bpm_dateTaken');
             $table->timestamps();
         });
     }
