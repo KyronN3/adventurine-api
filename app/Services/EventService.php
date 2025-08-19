@@ -97,7 +97,17 @@ class EventService
         try {
             DB::beginTransaction();
             
-            $event = Event::findOrFail($id);
+
+             $event=Event::with(['outcomes', 'attendance', 'participants']) ->find($id);
+
+            if (!$event) {
+                throw new EventServiceException('Event not found.');
+            }
+           
+            if ($event->event_status === 'active') {
+                throw new EventServiceException('Cannot delete an active event. Please cancel or complete the event before deletion.');
+               
+            }           
             $event->delete();
             
             DB::commit();
@@ -153,21 +163,21 @@ class EventService
     }
 
     
-    public function searchEvents($searchTerm)
-    {
-        try {
-            return Event::with(['outcomes', 'attendance', 'participants'])
-                ->where(function($query) use ($searchTerm) {
-                    $query->where('event_name', 'like', "%{$searchTerm}%")
-                          ->orWhere('event_description', 'like', "%{$searchTerm}%")
-                          ->orWhere('event_venue', 'like', "%{$searchTerm}%");
-                })
-                ->orderBy('event_date', 'desc')
-                ->get();
-        } catch (\Exception $e) {
-            throw new EventServiceException('Failed to search events: ' . $e->getMessage());
-        }
+public function searchEvents($searchTerm)
+{
+    try {
+        return Event::with(['outcomes', 'attendance', 'participants'])
+            ->where(function($query) use ($searchTerm) {
+                $query->where('event_name', 'like', "%{$searchTerm}%")
+                      ->orWhere('event_description', 'like', "%{$searchTerm}%")
+                      ->orWhere('event_venue', 'like', "%{$searchTerm}%");
+            })
+            ->orderBy('event_date', 'desc')
+            ->get();
+    } catch (\Exception $e) {
+        throw new EventServiceException('Failed to search events: ' . $e->getMessage());
     }
+}
 
    
     public function checkEventExists($eventName, $eventDate, $eventVenue = null)

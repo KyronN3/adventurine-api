@@ -30,8 +30,22 @@ class EventController extends Controller
             return ResponseFormat::error('Error retrieving events: ' . $e->getMessage(), 500);
         }
     }
+public function searchEventsName(Request $request): JsonResponse
+{
+    try {
+        $searchTerm = $request->query('search', '');
+        if (empty($searchTerm)) {
+            return ResponseFormat::error('Search term is required', 400);
+        }
+        $events = $this->service->searchEvents($searchTerm);
+        return ResponseFormat::success('Events retrieved successfully', $events);
+    } catch (EventServiceException $e) {
+        return ResponseFormat::error($e->getMessage(), 500);
+    } catch (\Exception $e) {
+        return ResponseFormat::error('Error searching events: ' . $e->getMessage(), 500);
+    }
+}
 
-   
     public function show(Event $event): JsonResponse
     {
         return ResponseFormat::success('Event retrieved successfully', $event);
@@ -66,10 +80,11 @@ class EventController extends Controller
     }
 
   
-    public function destroy(Event $event): JsonResponse
+
+    public function deleteEventById( $id): JsonResponse
     {
         try {
-            $this->service->deleteEvent($event->id);
+            $this->service->deleteEvent($id);
             return ResponseFormat::success('Event deleted successfully!');
         } catch (EventServiceException $e) {
             return ResponseFormat::error($e->getMessage(), 400);
@@ -90,7 +105,6 @@ class EventController extends Controller
         }
     }
 
-    
     public function getUpcomingEvents(): JsonResponse
     {
         try {
@@ -100,7 +114,17 @@ class EventController extends Controller
             return ResponseFormat::error('Error retrieving upcoming events: ' . $e->getMessage(), 500);
         }
     }
-
+   public function getEventById($id): JsonResponse
+    {
+        try {
+            $event = $this->service->getEventById($id);
+            return ResponseFormat::success('Event retrieved successfully', $event);
+        } catch (EventServiceException $e) {
+            return ResponseFormat::error($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return ResponseFormat::error('Error retrieving event: ' . $e->getMessage(), 500);
+        }
+    }
    
     public function getPastEvents(): JsonResponse
     {
