@@ -49,13 +49,14 @@ Route::prefix('v1')->group(function () {
     });
 
     
+    // HR event routes
     Route::prefix('/hr')->group(function () {
         Route::post('/event/create', [EventController::class, 'createNewEvent']);
         Route::put('/event/{event}', [EventController::class, 'update']);
         Route::delete('/event/{event}', [EventController::class, 'deleteEventById']);
     });
 
-    
+      // Event routes
      Route::prefix('/event')->group(function () {
         Route::get('search/all', [EventController::class, 'getEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById'])->where('id', '[0-9]+');
