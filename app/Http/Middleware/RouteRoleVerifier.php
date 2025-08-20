@@ -45,7 +45,7 @@ class RouteRoleVerifier
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],
                         ['path' => '/recognition-history', 'component' => '/src/pages/recognition/RecognitionHistoryPage.vue', 'name' => 'recognitionHistory',],
-                        ['path' => '/profile', 'component' => '/src/pages/client/ProfilePage.vue', 'name' => 'profile',],
+                        ['path' => '/profile', 'component' => '/src/pages/client/HRProfilePage.vue', 'name' => 'profile',],
                         ['path' => '/attendance', 'component' => '/src/components/AttendancePage.vue', 'name' => 'attendance',],
                     ],
                     'name' => 'hr'
@@ -69,6 +69,7 @@ class RouteRoleVerifier
                         ['path' => '/finished-events', 'component' => '/src/pages/trainingEvents/admin/FinishedEventsPage.vue', 'name' => 'finishedEvents',],
                         ['path' => '/create-recognition', 'component' => '/src/pages/recognition/admin/AdminCreateRecognition.vue', 'name' => 'createRecognition',],
                         ['path' => '/admin-recognition-history', 'component' => '/src/pages/recognition/admin/AdminRecognitionHistory.vue', 'name' => 'adminRecognitionHistory',],
+                        ['path' => '/profile', 'component' => '/src/pages/client/AdminProfilePage.vue', 'name' => 'profile',],
                         ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/admin/EventDetail.vue', 'name' => 'adminEventDetail',],
                     ],
                     'name' => 'admin'

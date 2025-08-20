@@ -24,7 +24,6 @@ class AuthController extends Controller
     public function register(RegisterUserRequest $request): JsonResponse
     {
         try {
-
             $user = DB::transaction(function () use ($request) {
                 // If anything fail in here just automatically rollback in short data will be not created ❤️❤️❤️
                 $user = User::create([
