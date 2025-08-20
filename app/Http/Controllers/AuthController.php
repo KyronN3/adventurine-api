@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\ResponseFormat;
+use App\Events\DashboardEvent;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -17,22 +20,27 @@ class AuthController extends Controller
      * Register Users ❤️❤️❤️
     */
 
+
     public function register(RegisterUserRequest $request): JsonResponse
     {
-        $user = User::create([
-            'name' => $request->validated()['name'],
-            'email' => $request->validated()['email'],
-            'password' => Hash::make($request->validated()['password']),
-        ]);
+        try {
 
-        // spatie-permission assigning Roles |||  Check spatie Docs. ❤️❤️❤️
-        $user->assignRole($request->validated()['role']);
+            $user = DB::transaction(function () use ($request) {
+                // If anything fail in here just automatically rollback in short data will be not created ❤️❤️❤️
+                $user = User::create([
+                    'name' => $request->validated()['name'],
+                    'email' => $request->validated()['email'],
+                    'password' => Hash::make($request->validated()['password']),
+                ]);
+                // spatie-permission assigning Roles |||  Check spatie Docs. ❤️❤️❤️
+                $user->assignRole($request->validated()['role']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User created successfully',
-            'created_at' => $user->created_at->format('Y-m-d H:i:s'),
-        ], 201);
+                return $user;
+            });
+            return ResponseFormat::creationSuccess('Created Successfully', $request->validated()['role'], $user->created_at, $user->only(['name', 'email']), 201);
+        } catch (\Exception $e) {
+            return ResponseFormat::error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function login(Request $request): JsonResponse
@@ -93,4 +101,5 @@ class AuthController extends Controller
             cookie()->forget('api_token')
         );
     }
+
 }

@@ -3,7 +3,6 @@
 namespace App\Components;
 
 use Illuminate\Http\JsonResponse;
-use Carbon\Carbon;
 
 class ResponseFormat
 {
@@ -21,6 +20,16 @@ class ResponseFormat
         return response()->json([
             'requestAt' => now()->format('Y-m-d H:i:s'),
             'message' => $message,
+        ], $status);
+    }
+
+    public static function creationSuccess(string $message, string $role, mixed $createdAt, mixed $data = null, int $status = 201): JsonResponse
+    {
+        return response()->json([
+            'created_at' => $createdAt->now()->format('Y-m-d H:i:s'),
+            'message' => $message,
+            'role' => $role,
+            'data' => $data,
         ], $status);
     }
 
