@@ -49,11 +49,17 @@ Route::prefix('v1')->group(function () {
     });
 
 
+    
+    // HR event routes
     Route::prefix('/hr')->group(function () {
         Route::post('/event/create', [EventController::class, 'createNewEvent']);
         Route::put('/event/{event}', [EventController::class, 'update']);
         Route::delete('/event/{event}', [EventController::class, 'destroy']);
     });
+
+
+      // Event routes
+     Route::prefix('/event')->group(function () {
 
 
     Route::prefix('/event')->group(function () {
@@ -64,4 +70,6 @@ Route::prefix('v1')->group(function () {
         Route::get('search/past', [EventController::class, 'getPastEvents']);
         Route::get('{event}', [EventController::class, 'show']);
     });
+});
+
 });
