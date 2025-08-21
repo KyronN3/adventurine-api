@@ -45,9 +45,19 @@ class BPMController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $response = $this->service->createNewBpm($validatedData);
+            
+            // checker just in case if non batch was requested
+            if (isset($validatedData['bpm_entries'])) {
+                // batch
+                $response = $this->service->createMultipleBpms($validatedData['bpm_entries']);
+                $message = count($response) . ' BPM records created successfully!';
+            } else {
+                $response = $this->service->createNewBpm($validatedData);
+                $message = 'New BPM record created successfully!';
+            }
+            
             LogMessages::bpm(BpmFunction::CREATION, LayerLevel::CONTROLLER, LogLevel::INFO);
-            return ResponseFormat::success('New BPM record created successfully!', $response, 201);
+            return ResponseFormat::success($message, $response, 201);
         } catch (BpmServiceException $e) {
             LogMessages::bpm(BpmFunction::CREATION, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error($e->getMessage(), 400);
@@ -65,12 +75,9 @@ class BPMController extends Controller
     public function destroy(BPM $bPM): JsonResponse
     {
         try {
-            $this->service->deleteBpm($bPM->id);
+            $bPM->delete();
             LogMessages::bpm(BpmFunction::DELETE, LayerLevel::CONTROLLER, LogLevel::INFO);
             return ResponseFormat::success('BPM record deleted successfully!');
-        } catch (BpmServiceException $e) {
-            LogMessages::bpm(BpmFunction::DELETE, LayerLevel::CONTROLLER, LogLevel::ERROR);
-            return ResponseFormat::error($e->getMessage(), 400);
         } catch (\Exception $e) {
             LogMessages::bpm(BpmFunction::DELETE, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error('Error deleting BPM record: ' . $e->getMessage(), 500);

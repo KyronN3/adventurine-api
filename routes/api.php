@@ -69,6 +69,6 @@ Route::prefix('v1')->group(function () {
     // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
-        Route::post('/bpm/create', [BpmController::class, 'store']);
+        Route::post('/create', [BpmController::class, 'store']);
     });
 });

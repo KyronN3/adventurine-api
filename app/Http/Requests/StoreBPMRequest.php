@@ -14,6 +14,30 @@ class StoreBPMRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        // Batch save man ang bpm
+        if ($this->isJson()) {
+            $jsonData = $this->json()->all();
+            // Check kung batch ba or single. Sa frontend
+                // sa create bpm batch jud na iya i send. pero
+                // i leave nlng nko just in case
+
+                if (array_keys($jsonData) === range(0, count($jsonData) - 1)) { //batch
+                    $this->merge(['bpm_entries' => $jsonData]);
+                } else {
+                    $this->merge(['bpm_entries' => [$jsonData]]); // not batch
+                }
+        } else {
+            // Handle form data
+            $data = $this->all();
+            if (!isset($data[0]) && !is_array($data)) {
+                $data = [$data];
+            }
+            $this->merge(['bpm_entries' => $data]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,11 +46,12 @@ class StoreBPMRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employee_name' => 'required|string|max:255',
-            'employee_department' => 'required|string|max:255',
-            'bpm_systolic' => 'required|integer|min:0|max:300',
-            'bpm_diastolic' => 'required|integer|min:0|max:200',
-            'bpm_dateTaken' => 'required|date_format:Y-m-d',
+            'bpm_entries' => 'required|array',
+            'bpm_entries.*.employee_name' => 'required|string|max:255',
+            'bpm_entries.*.employee_department' => 'required|string|max:255',
+            'bpm_entries.*.bpm_systolic' => 'required|integer|min:0|max:300',
+            'bpm_entries.*.bpm_diastolic' => 'required|integer|min:0|max:200',
+            'bpm_entries.*.bpm_dateTaken' => 'required|date_format:Y-m-d',
         ];
     }
 
@@ -38,24 +63,24 @@ class StoreBPMRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'employee_name.required' => 'Employee name is required',
-            'employee_name.string' => 'Employee name must be a string',
-            'employee_name.max' => 'Employee name must not exceed 255 characters',
-            'employee_department.required' => 'Employee department is required',
-            'employee_department.string' => 'Employee department must be a string',
-            'employee_department.max' => 'Employee department must not exceed 255 characters',
-            'bpm_systolic.required' => 'Systolic blood pressure is required',
-            'bpm_systolic.integer' => 'Systolic blood pressure must be an integer',
-            'bpm_systolic.min' => 'Systolic blood pressure must be at least 0',
-            'bpm_systolic.max' => 'Systolic blood pressure must not exceed 300',
-            'bpm_diastolic.required' => 'Diastolic blood pressure is required',
-            'bpm_diastolic.integer' => 'Diastolic blood pressure must be an integer',
-            'bpm_diastolic.min' => 'Diastolic blood pressure must be at least 0',
-            'bpm_diastolic.max' => 'Diastolic blood pressure must not exceed 200',
-            'bpm_dateTaken.required' => 'Date taken is required',
-            'bpm_dateTaken.date_format' => 'Date taken must be in YYYY-MM-DD format',
-            'measurement_time.string' => 'Measurement time must be a string',
-            'measurement_time.max' => 'Measurement time must not exceed 255 characters',
+            'bpm_entries.required' => 'BPM entries are required',
+            'bpm_entries.array' => 'BPM entries must be an array',
+            'bpm_entries.*.employee_name.required' => 'Employee name is required',
+            'bpm_entries.*.employee_name.string' => 'Employee name must be a string',
+            'bpm_entries.*.employee_name.max' => 'Employee name must not exceed 255 characters',
+            'bpm_entries.*.employee_department.required' => 'Employee department is required',
+            'bpm_entries.*.employee_department.string' => 'Employee department must be a string',
+            'bpm_entries.*.employee_department.max' => 'Employee department must not exceed 255 characters',
+            'bpm_entries.*.bpm_systolic.required' => 'Systolic blood pressure is required',
+            'bpm_entries.*.bpm_systolic.integer' => 'Systolic blood pressure must be an integer',
+            'bpm_entries.*.bpm_systolic.min' => 'Systolic blood pressure must be at least 0',
+            'bpm_entries.*.bpm_systolic.max' => 'Systolic blood pressure must not exceed 300',
+            'bpm_entries.*.bpm_diastolic.required' => 'Diastolic blood pressure is required',
+            'bpm_entries.*.bpm_diastolic.integer' => 'Diastolic blood pressure must be an integer',
+            'bpm_entries.*.bpm_diastolic.min' => 'Diastolic blood pressure must be at least 0',
+            'bpm_entries.*.bpm_diastolic.max' => 'Diastolic blood pressure must not exceed 200',
+            'bpm_entries.*.bpm_dateTaken.required' => 'Date taken is required',
+            'bpm_entries.*.bpm_dateTaken.date_format' => 'Date taken must be in YYYY-MM-DD format',
         ];
     }
 }

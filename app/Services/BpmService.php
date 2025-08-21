@@ -44,4 +44,27 @@ class BpmService
             );
         }
     }
+
+    /**
+     * batch create bpm records
+     *
+     * @param array $data
+     * @return array
+     * @throws BpmServiceException
+     */
+    public function createMultipleBpms(array $data): array
+    {
+        try {
+            $createdRecords = [];
+            foreach ($data as $bpmData) {
+                $createdRecords[] = Bpm::create($bpmData);
+            }
+            return $createdRecords;
+        } catch (\Exception $e) {
+            throw new BpmServiceException(
+                "Failed to create multiple BPM records",
+                "Database error: " . $e->getMessage()
+            );
+        }
+    }
 }
