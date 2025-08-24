@@ -6,7 +6,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 
 /*
-    * Welcome Message
+⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
+⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
+⠀⠀⢀⢀⢄⢬⢪⡪⡎⣆⡈⠚⠜⠕⠇⠗⠝⢕⢯⢫⣞⣯⣿⣻⡽⣏⢗⣗⠏⠀
+⠀⠪⡪⡪⣪⢪⢺⢸⢢⢓⢆⢤⢀⠀⠀⠀⠀⠈⢊⢞⡾⣿⡯⣏⢮⠷⠁⠀⠀
+⠀⠀⠀⠈⠊⠆⡃⠕⢕⢇⢇⢇⢇⢇⢏⢎⢎⢆⢄⠀⢑⣽⣿⢝⠲⠉⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⡿⠂⠠⠀⡇⢇⠕⢈⣀⠀⠁⠡⠣⡣⡫⣂⣿⠯⢪⠰⠂⠀⠀⠀⠀
+⠀⠀⠀⠀⡦⡙⡂⢀⢤⢣⠣⡈⣾⡃⠠⠄⠀⡄⢱⣌⣶⢏⢊⠂⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢝⡲⣜⡮⡏⢎⢌⢂⠙⠢⠐⢀⢘⢵⣽⣿⡿⠁⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠨⣺⡺⡕⡕⡱⡑⡆⡕⡅⡕⡜⡼⢽⡻⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣼⣳⣫⣾⣵⣗⡵⡱⡡⢣⢑⢕⢜⢕⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣴⣿⣾⣿⣿⣿⡿⡽⡑⢌⠪⡢⡣⣣⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⡟⡾⣿⢿⢿⢵⣽⣾⣼⣘⢸⢸⣞⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 */
 
 Route::get('/welcome', function () {
@@ -32,6 +44,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('/admin')->group(function () {
         Route::prefix('/recognition')->group(function () {
             Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
+            
             Route::post('/delete/{id}', [RecognitionController::class, 'deletePendingRecognition']);
             Route::put('/approve/{id}', [RecognitionController::class, 'approveRecognition']);
             Route::put('/reject/{id}', [RecognitionController::class, 'rejectRecognition']);;
@@ -53,23 +66,24 @@ Route::prefix('v1')->group(function () {
     // HR event routes
     Route::prefix('/hr')->group(function () {
         Route::post('/event/create', [EventController::class, 'createNewEvent']);
-        Route::put('/event/{event}', [EventController::class, 'update']);
-        Route::delete('/event/{event}', [EventController::class, 'destroy']);
+        Route::put('/event/{event}', [EventController::class, 'updateEvent']);
+        Route::delete('/event/{event}', [EventController::class, 'deleteEventById']);
     });
 
 
       // Event routes
-     Route::prefix('/event')->group(function () {
+    
 
 
-    Route::prefix('/event')->group(function () {
-        Route::get('search/all', [EventController::class, 'getEvents']);
-        Route::get('search/{id}', [EventController::class, 'getEventById']);
-        Route::get('search/status', [EventController::class, 'getEventsByStatus']);
-        Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-        Route::get('search/past', [EventController::class, 'getPastEvents']);
-        Route::get('{event}', [EventController::class, 'show']);
-    });
+  Route::prefix('/event')->group(function () {
+    Route::get('search/all', [EventController::class, 'getEvents']);
+    Route::get('search/{id}', [EventController::class, 'getEventById']);
+    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
+    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
+    Route::get('search/past', [EventController::class, 'PastEvents']);
+    Route::get('search', [EventController::class, 'searchEventsName']);
+    Route::get('{event}', [EventController::class, 'show']);
 });
+
 
 });
