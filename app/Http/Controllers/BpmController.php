@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBPMRequest;
-use App\Models\BPM;
+use App\Models\Bpm;
 use App\Services\BpmService;
 use App\Components\ResponseFormat;
 use App\Exceptions\BpmServiceException;
@@ -67,12 +67,37 @@ class BPMController extends Controller
         }
     }
 
-    // no update cuz duh, why update your bpm? - velvet underground 🍌
+    /**
+     * Update the specified BPM record in storage.
+     */
+    public function update(StoreBPMRequest $request, Bpm $bpm): JsonResponse
+    {
+        try {
+            $validatedData = $request->validated();
+            
+            // For update, we expect a single record, not batch
+            if (isset($validatedData['bpm_entries']) && count($validatedData['bpm_entries']) > 0) {
+                $bpmData = $validatedData['bpm_entries'][0];
+                $bpm->update($bpmData);
+                LogMessages::bpm(BpmFunction::UPDATE, LayerLevel::CONTROLLER, LogLevel::INFO);
+                return ResponseFormat::success('BPM record updated successfully!', $bpm);
+            } else {
+                LogMessages::bpm(BpmFunction::UPDATE, LayerLevel::CONTROLLER, LogLevel::ERROR);
+                return ResponseFormat::error('Invalid data provided for update', 400);
+            }
+        } catch (BpmServiceException $e) {
+            LogMessages::bpm(BpmFunction::UPDATE, LayerLevel::CONTROLLER, LogLevel::ERROR);
+            return ResponseFormat::error($e->getMessage(), 400);
+        } catch (\Exception $e) {
+            LogMessages::bpm(BpmFunction::UPDATE, LayerLevel::CONTROLLER, LogLevel::ERROR);
+            return ResponseFormat::error('Error updating BPM record: ' . $e->getMessage(), 500);
+        }
+    }
 
     /**
      * Remove the specified BPM record from storage.
      */
-    public function destroy(BPM $bPM): JsonResponse
+    public function destroy(Bpm $bPM): JsonResponse
     {
         try {
             $bPM->delete();

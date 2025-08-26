@@ -67,4 +67,25 @@ class BpmService
             );
         }
     }
+
+    /**
+     * Update an existing BPM record
+     *
+     * @param BPM $bpm
+     * @param array $data
+     * @return BPM
+     * @throws BpmServiceException
+     */
+    public function updateBpm(BPM $bpm, array $data): BPM
+    {
+        try {
+            $bpm->update($data);
+            return $bpm;
+        } catch (\Exception $e) {
+            throw new BpmServiceException(
+                "Failed to update BPM record",
+                "Database error: " . $e->getMessage()
+            );
+        }
+    }
 }
