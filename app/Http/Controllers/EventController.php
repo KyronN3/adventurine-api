@@ -67,39 +67,8 @@ public function searchEventsName(Request $request): JsonResponse
    
 public function updateEvent(UpdateEventRequest $request, Event $event): JsonResponse
 {
- 
     try {
             $validatedData = $request->validated();
-
-           
-            if (empty($validatedData['event_name'])) {
-                return ResponseFormat::error('Please provide a valid event name.', 422);
-            }
-            if (empty($validatedData['event_date'])) {
-                return ResponseFormat::error('Please provide a valid event date (YYYY-MM-DD) format.', 422);
-            }
-            if (empty($validatedData['event_description'])) {
-                return ResponseFormat::error('Please provide a valid event description.', 422);
-            }
-            if (empty($validatedData['event_venue'])) {
-                return ResponseFormat::error('Please provide a valid event venue.', 422);
-            }
-            if (empty($validatedData['event_mode'])) {
-                return ResponseFormat::error('Please provide a valid event mode.', 422);
-            }
-            if (empty($validatedData['event_activity'])) {
-                return ResponseFormat::error('Please provide a valid event activity.', 422); 
-                  
-           }
-            if (empty($validatedData['event_tags'])) {
-                return ResponseFormat::error('Please provide at least one event tag.', 422);
-            }
-            if (empty($validatedData['event_departments'])) {
-                return ResponseFormat::error('Please provide at least one event department.', 422);
-            }
-            if (empty($validatedData['event_forms'])) {
-                return ResponseFormat::error('Please provide at least one event form.', 422);
-            }
             $response = $this->service->updateEvent($event->id, $validatedData);
             return ResponseFormat::success('Event updated successfully!', $response);
         } catch (EventServiceException $e) {
