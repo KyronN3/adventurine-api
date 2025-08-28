@@ -76,19 +76,27 @@ class EventService
    
     public function updateEvent($id, $data)
     {
-        try {
-            DB::beginTransaction();
-            
-            $event = Event::findOrFail($id);
-            $event->update($data);
-            
-            DB::commit();
-            
-            return $event->load(['outcomes', 'attendance', 'participants']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw new EventServiceException('Failed to update event: ' . $e->getMessage());
+       $event = Event::find($id);
+        if (!$event) {
+            throw new EventServiceException('No event found to update');
         }
+
+        return DB::transaction(function () use ($event, $data) {
+            $event->update($data);
+            if (isset($data['outcomes'])) {
+                $event->outcomes()->delete();
+                $event->outcomes()->createMany($data['outcomes']);
+            }
+            if (isset($data['participants'])) {
+                $event->participants()->delete();
+                $event->participants()->createMany($data['participants']);
+            }
+            if (isset($data['attendance'])) {
+                $event->attendance()->delete();
+                $event->attendance()->createMany($data['attendance']);
+            }
+            return $event->load(['outcomes', 'participants', 'attendance']);
+        });
     }
 
    
@@ -158,26 +166,29 @@ class EventService
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;/####\;;;;;;;;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;/#######\;;;;;;;
 */
-    public function getEventsByStatus($status)
-    {
-        try {
-            $query = Event::with(['outcomes', 'attendance', 'participants']);
+public function getEventsByStatus($status)
+{
+    try {
+        $query = Event::with(['outcomes', 'attendance', 'participants']);
+        
+        if ($status !== 'all') {
             
-            if ($status !== 'all') {
-                $query->where('event_status', $status);
+            if (!in_array($status, ['active', 'verified', 'completed', 'cancelled'])) {
+                throw new EventServiceException('Invalid status provided. Allowed values are: active, verified, completed, cancelled.');
             }
-            
-            return $query->orderBy('event_date', 'desc')->get();
-        } catch (\Exception $e) {
-            throw new EventServiceException('Failed to retrieve events by status: ' . $e->getMessage());
+            $query->where('event_status', $status);
         }
+        
+        return $query->orderBy('event_date', 'desc')->get();
+    } catch (\Exception $e) {
+        throw new EventServiceException('Failed to retrieve events by status: ' . $e->getMessage());
     }
-
+}
     
     public function getUpcomingEvents()
     {
         try {
-            return Event::with(['outcomes', 'attendance', 'participants'])
+            return Event::with(['outcomes', 'attendance', 'participants','verified'])
                 ->where('event_date', '>=', now()->format('Y-m-d'))
                 ->where('event_status', 'active')
                 ->orderBy('event_date', 'asc')

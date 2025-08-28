@@ -28,7 +28,8 @@ class UpdateEventRequest extends FormRequest
             'event_mode'        => 'required|string|nullable|max:100',
             'event_forms'       => 'required|array|nullable',
             'event_created'     => 'sometimes|date_format:Y-m-d|nullable',
-            'event_status'      => 'required|string|nullable|in:active,completed,cancelled',
+            // event status can be active, completed, cancelled, verified
+            'event_status'      => 'required|string|nullable|in:active,completed,cancelled,verified',
 
             'outcomes'                 => 'sometimes|array|nullable',
             'outcomes.*.title'         => 'required_with:outcomes|string|max:255',

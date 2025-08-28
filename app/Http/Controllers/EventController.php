@@ -65,14 +65,14 @@ public function searchEventsName(Request $request): JsonResponse
     }
 
    
-public function updateEvent(UpdateEventRequest $request, Event $event): JsonResponse
+public function updateEvent(UpdateEventRequest $request,$id ): JsonResponse
 {
     try {
             $validatedData = $request->validated();
-            $response = $this->service->updateEvent($event->id, $validatedData);
+            $response = $this->service->updateEvent($id, $validatedData);
             return ResponseFormat::success('Event updated successfully!', $response);
         } catch (EventServiceException $e) {
-            return ResponseFormat::error($e->getMessage(), 400);
+            return ResponseFormat::error($e->getMessage(), $e->getMessage() === 'No event found to update' ? 404 : 400);
         } catch (\Exception $e) {
             return ResponseFormat::error('Error updating event: ' . $e->getMessage(), 500);
         }
@@ -93,17 +93,17 @@ public function updateEvent(UpdateEventRequest $request, Event $event): JsonResp
     }
 
     
-    public function getEventsByStatus(Request $request): JsonResponse
-    {
-        try {
-            $status = $request->query('status', 'all');
-            $events = $this->service->getEventsByStatus($status);
-            return ResponseFormat::success('Events retrieved successfully', $events);
-        } catch (\Exception $e) {
-            return ResponseFormat::error('Error retrieving events: ' . $e->getMessage(), 500);
-        }
+ public function getEventsByStatus(Request $request): JsonResponse
+{
+    try {
+        $status = $request->query('status', 'all');
+        $events = $this->service->getEventsByStatus($status);
+        
+        return ResponseFormat::success('Events retrieved successfully', $events ?? []);
+    } catch (\Exception $e) {
+        return ResponseFormat::error('Error retrieving events: ' . $e->getMessage(), 500);
     }
-
+}
     public function getUpcomingEvents(): JsonResponse
     {
         try {
@@ -135,6 +135,15 @@ public function updateEvent(UpdateEventRequest $request, Event $event): JsonResp
         }
     }
 
+public function getVerifiedEvents() {
+    $events = Event::where('event_status', 'verified')->get();
+
+    return response()->json([
+        'message' => 'Verified events fetched successfully!',
+        'data' => $events,
+        'requestAt' => now()->toDateTimeString()
+    ], 200);
+}
    
     public function checkDuplicateEvent(Request $request): JsonResponse
     {

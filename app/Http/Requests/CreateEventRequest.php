@@ -30,7 +30,7 @@ class CreateEventRequest extends FormRequest
             'event_departments.*' => 'required|string|max:50|not_in:0',
             'event_forms' => 'required|array|min:1',
             'event_forms.*' => 'required|string|not_in:0',
-            'event_status' => 'required|string|in:active,completed,cancelled',
+            'event_status' => 'required|string|in:active,completed,cancelled,verified',
         ];
     }
 
