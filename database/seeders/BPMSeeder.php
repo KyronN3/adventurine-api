@@ -11,6 +11,6 @@ class BPMSeeder extends Seeder
     // well wala paman ang employee's table so dli ko ka FK. Too Bad! - velvet underground 🍌
     public function run(): void
     {
-        Bpm::factory()->count(10)->create();
+        Bpm::factory()->count(50)->create();
     }
 }

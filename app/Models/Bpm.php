@@ -15,7 +15,10 @@ class Bpm extends Model
     protected $fillable = [
         // subject to change if mag add na ang employee table - velvet underground 🍌
         'employee_name',
-        'employee_department',
+        'designation',
+        'sex',
+        'medical_history',
+        'status',
         'bpm_systolic',
         'bpm_diastolic',
         'bpm_dateTaken'
