@@ -77,6 +77,7 @@ Route::prefix('v1')->group(function () {
 
   Route::prefix('/event')->group(function () {
     Route::get('search/all', [EventController::class, 'getEvents']);
+    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
     Route::get('search/{id}', [EventController::class, 'getEventById']);
     Route::get('search/status', [EventController::class, 'getEventsByStatus']);
     Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);

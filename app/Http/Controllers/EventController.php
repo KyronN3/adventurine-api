@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Http\Requests\CreateEventRequest;
 use App\Http\Requests\UpdateEventRequest;
+use App\Http\Requests\GetVerifiedEventsRequest;
 use App\Services\EventService;
 use App\Components\ResponseFormat;
 use App\Exceptions\EventServiceException;
@@ -45,6 +46,17 @@ public function searchEventsName(Request $request): JsonResponse
         return ResponseFormat::error('Error searching events: ' . $e->getMessage(), 500);
     }
 }
+public function getVerifiedEvents(GetVerifiedEventsRequest $request): JsonResponse
+    {
+        try {
+            $events = $this->service->getVerifiedEvents();
+           
+            return ResponseFormat::success('Events retrieved successfully', $events);
+        } catch (\Exception $e) {
+            
+            return ResponseFormat::error('Error retrieving verified events: ' . $e->getMessage(), 500);
+        }
+    }
 
    public function show(Event $event): JsonResponse
 {
@@ -135,15 +147,15 @@ public function updateEvent(UpdateEventRequest $request,$id ): JsonResponse
         }
     }
 
-public function getVerifiedEvents() {
-    $events = Event::where('event_status', 'verified')->get();
+// public function getVerifiedEvents() {
+//     $events = Event::where('event_status', 'verified')->get();
 
-    return response()->json([
-        'message' => 'Verified events fetched successfully!',
-        'data' => $events,
-        'requestAt' => now()->toDateTimeString()
-    ], 200);
-}
+//     return response()->json([
+//         'message' => 'Verified events fetched successfully!',
+//         'data' => $events,
+//         'requestAt' => now()->toDateTimeString()
+//     ], 200);
+// }
    
     public function checkDuplicateEvent(Request $request): JsonResponse
     {
