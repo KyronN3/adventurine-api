@@ -147,16 +147,6 @@ public function updateEvent(UpdateEventRequest $request,$id ): JsonResponse
         }
     }
 
-// public function getVerifiedEvents() {
-//     $events = Event::where('event_status', 'verified')->get();
-
-//     return response()->json([
-//         'message' => 'Verified events fetched successfully!',
-//         'data' => $events,
-//         'requestAt' => now()->toDateTimeString()
-//     ], 200);
-// }
-   
     public function checkDuplicateEvent(Request $request): JsonResponse
     {
         try {
