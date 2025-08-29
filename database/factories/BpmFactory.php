@@ -16,18 +16,12 @@ class BpmFactory extends Factory
      */
     public function definition(): array
     {
-        $designations = ['IT Department', 'HR Department', 'Marketing Department', 'Finance Department', 'Operations Department', 'Admin Department'];
-        $statuses = ['Permanent', 'Coterminous', 'Temporary', 'Casual', 'Job Order', 'Honorarium'];
-        $sexes = ['M', 'F'];
         $medicalHistories = ['NONE', 'Hypertension', 'Diabetes', 'Asthma', 'Allergies', 'Heart Condition'];
 
         return [
-            // why no table for the employee? then I make one then - velvet underground 🍌
-            'employee_name' => $this->faker->name(),
-            'designation' => $this->faker->randomElement($designations),
-            'sex' => $this->faker->randomElement($sexes),
+            // Use control_no to reference vwActive instead of storing employee data
+            'control_no' => $this->faker->unique()->numerify('0#####'),
             'medical_history' => $this->faker->randomElement($medicalHistories),
-            'status' => $this->faker->randomElement($statuses),
             'bpm_systolic' => $this->faker->numberBetween(90, 140),
             'bpm_diastolic' => $this->faker->numberBetween(60, 90),
             'bpm_dateTaken' => $this->faker->date(),

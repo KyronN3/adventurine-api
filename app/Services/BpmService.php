@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 class BpmService
 {
     /**
-     * Get all BPM records
+     * Get all BPM records with employee details from vwActive
      *
      * @return Collection
      * @throws BpmServiceException
@@ -17,7 +17,16 @@ class BpmService
     public function getAllBpms(): Collection
     {
         try {
-            return Bpm::all();
+            return Bpm::leftJoin('vwActive', 'bpm.control_no', '=', 'vwActive.ControlNo')
+                ->select(
+                    'bpm.*',
+                    'vwActive.Name1 as employee_name',
+                    'vwActive.Sex',
+                    'vwActive.Office',
+                    'vwActive.Designation',
+                    'vwActive.Status'
+                )
+                ->get();
         } catch (\Exception $e) {
             throw new BpmServiceException(
                 "Failed to retrieve BPM records",

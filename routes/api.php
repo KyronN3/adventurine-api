@@ -72,5 +72,12 @@ Route::prefix('v1')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
         Route::post('/create', [BpmController::class, 'store']);
         Route::put('/{bpm}', [BpmController::class, 'update']);
+        Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
+    });
+
+    // Employee data routes
+    Route::prefix('/employees')->group(function () {
+        Route::get('/office/{office}', [BpmController::class, 'getEmployeesByOffice']);
+        Route::get('/test', [BpmController::class, 'testDatabaseConnection']);
     });
 });

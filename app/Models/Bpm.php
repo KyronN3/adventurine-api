@@ -14,11 +14,13 @@ class Bpm extends Model
 
     protected $fillable = [
         // subject to change if mag add na ang employee table - velvet underground 🍌
+        'control_no',
         'employee_name',
         'designation',
         'sex',
         'medical_history',
         'status',
+        'employee_department',
         'bpm_systolic',
         'bpm_diastolic',
         'bpm_dateTaken'
@@ -26,5 +28,14 @@ class Bpm extends Model
 
     protected $casts = [
         'bpm_dateTaken' => 'date',
+        'control_no' => 'string',
     ];
+
+    /**
+     * Get the employee details from vwActive view
+     */
+    public function employee()
+    {
+        return $this->belongsTo(\Illuminate\Support\Facades\DB::table('vwActive'), 'control_no', 'ControlNo');
+    }
 }
