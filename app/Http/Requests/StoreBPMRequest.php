@@ -16,23 +16,17 @@ class StoreBPMRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        // Handle JSON data from frontend
         if ($this->isJson()) {
             $jsonData = $this->json()->all();
 
-            // Check if frontend already sent bpm_entries structure
             if (isset($jsonData['bpm_entries'])) {
-                // Frontend already structured the data correctly
                 $this->merge(['bpm_entries' => $jsonData['bpm_entries']]);
             } elseif (array_keys($jsonData) === range(0, count($jsonData) - 1)) {
-                // Root level is an array (batch of records)
                 $this->merge(['bpm_entries' => $jsonData]);
             } else {
-                // Single record object
                 $this->merge(['bpm_entries' => [$jsonData]]);
             }
         } else {
-            // Handle form data
             $data = $this->all();
             if (!isset($data[0]) && !is_array($data)) {
                 $data = [$data];
