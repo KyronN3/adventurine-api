@@ -27,12 +27,10 @@ class RouteRoleVerifier
                 ],
             ]), 401);
         }
-
         $user = Auth::user();
         if ($user->hasRole('hr')) {
-
             $capture_original = json_decode($response->content(), true);
-            return response()->json(array_merge($capture_original, [
+            $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
                 'routes' => [
                     'path' => '/',
@@ -51,12 +49,18 @@ class RouteRoleVerifier
                     'name' => 'hr'
                 ]
             ]), 200);
+
+            /* Preserve All Headers from the Controller 😉👌*/
+            $newResponse->withHeaders($response->headers->all());
+
+            return $newResponse;
+
         }
 
         if ($user->hasRole('admin')) {
 
             $capture_original = json_decode($response->content(), true);
-            return response()->json(array_merge($capture_original, [
+            $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
                 'routes' => [
                     'path' => '/',
@@ -75,6 +79,10 @@ class RouteRoleVerifier
                     'name' => 'admin'
                 ],
             ]), 200);
+
+            /* Preserve All Headers from the Controller 😉👌*/
+            $newResponse->withHeaders($response->headers->all());
+            return $newResponse;
         }
 
         return $response;

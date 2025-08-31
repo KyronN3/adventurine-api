@@ -10,6 +10,7 @@ class Event extends Model
     /** @use HasFactory<\Database\Factories\EventFactory> */
     use HasFactory;
 
+    protected $table = 'ldrEvents';
     protected $fillable = [
         'event_name',
         'event_tags',
@@ -46,6 +47,8 @@ class Event extends Model
     {
         return $this->hasMany(EventParticipant::class, 'event_id', 'id');
     }
+
+
 }
 
 

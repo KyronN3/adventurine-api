@@ -10,7 +10,7 @@ class EventServiceException extends Exception
 
     public function __construct(string     $userMessage = "User Message: Problems in Recognition Service Layer",
                                 string     $internalMessage = "",
-                                int        $code = 0,
+                                int        $code = 500,
                                 ?Exception $previous = null)
     {
         $this->internalMessage = $internalMessage;

@@ -6,53 +6,52 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreateEventRequest extends FormRequest
 {
-   
+
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->hasRole('hr');
     }
 
-  
+
     public function rules(): array
     {
         return [
-            'event_name' => 'required|string|max:255',
-            'event_description' => 'required|string|max:1000',
-            'event_date' => 'required|date_format:Y-m-d',
-            'event_venue' => 'required|string|max:255',
-            'event_mode' => 'nullable|string|max:100',
-            'event_activity' => 'nullable|string|max:255',
-            'event_tags' => 'sometimes|array',
-            'event_tags.*' => 'string|max:50',
-            'event_departments' => 'required|array|min:1',
-            'event_departments.*' => 'string|max:50',
-            'event_forms' => 'sometimes|array',
-            'event_status' => 'nullable|string|in:active,completed,cancelled',
+            'event_name' => 'bail|required|string|max:255',
+            'event_description' => 'bail|required|string|max:1000',
+            'event_date' => 'bail|required|date_format:Y-m-d',
+            'event_duration' => 'bail|required|string|in:single,multi',
+            'event_location' => 'bail|required|string|max:255',
+            'event_model' => 'bail|required|string|max:100|in:in-house,external',
+            'event_end_date' => 'bail|nullable|string|max:255',
+            'event_types' => 'bail|required|string|max:50|in:seminar,training,workshop,orientation,conference,webinar,team_building, assessment',
+            'event_departments.*' => 'bail|string|max:50',
+            'event_forms' => 'bail|nullable|array',
+            'event_status' => 'bail|required|string|in:active,completed,cancelled',
         ];
     }
 
-   
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'event_name' => $this->input('eventName'),
+            'event_description' => $this->input('eventDescription'),
+            'event_date' => $this->input('eventDate'),
+            'event_end_date' => $this->input('eventEndDate'),
+            'event_duration' => $this->input('eventDuration'),
+            'event_location' => $this->input('eventLocation'),
+            'event_model' => $this->input('eventModel'),
+            'event_types' => $this->input('eventTypes'),
+            'event_departments' => $this->input('eventDepartments'),
+            'event_forms' => $this->input('eventForms'),
+            'event_status' => $this->input('eventStatus'),
+        ]);
+    }
+
     public function messages(): array
     {
+        // You can Create customize error message here ✍️😋
         return [
-            'event_name.required' => 'please provide event name',
-            'event_name.string' => 'Please provide event name',
-            'event_name.max' => 'Event name cannot exceed 255 characters.',
-            'event_description.required' => 'Event description is required.',
-            'event_description.max' => 'Event description cannot exceed 1000 characters.',
-            'event_date.required' => 'Event date is required.',
-            'event_date.date_format' => 'Event date must be in Y-m-d format.',
-            'event_venue.required' => 'Please provide venue',
-            'event_venue.string' => 'Please provide venue',
-            'event_venue.max' => 'Event venue cannot exceed 255 characters.',
-            'event_mode.max' => 'Event mode cannot exceed 100 characters.',
-            'event_activity.max' => 'Event activity cannot exceed 255 characters.',
-            'event_departments.required' => 'Please provide department',
-            'event_departments.array' => 'Please provide department',
-            'event_departments.min' => 'Please provide department',
-            'event_departments.*.string' => 'Please provide department',
-            'event_departments.*.max' => 'Department name cannot exceed 50 characters.',
-            'event_status.in' => 'Event status must be active, completed, or cancelled.',
+
         ];
     }
 }
