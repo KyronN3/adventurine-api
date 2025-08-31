@@ -49,7 +49,7 @@ class CreateEventRequest extends FormRequest
 
     public function messages(): array
     {
-        // You can Create customize error message here ✍️😋
+        // You can Create a Customize error message here ✍️😋
         return [
 
         ];

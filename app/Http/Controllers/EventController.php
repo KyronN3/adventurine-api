@@ -71,7 +71,7 @@ class EventController extends Controller
             return ResponseFormat::creationSuccess('New event created successfully!',
                 Auth::user()->hasRole('hr') ? 'hr' : 'admin',
                 now(), $response, 201);
-            
+
         } catch (EventServiceException $e) {
             return ResponseFormat::error($e->getMessage(), 400);
         } catch (\Exception $e) {
