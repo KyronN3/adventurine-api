@@ -26,6 +26,7 @@ class BpmService
                     'vwActive.Designation',
                     'vwActive.Status'
                 )
+                ->distinct()
                 ->get();
         } catch (\Exception $e) {
             throw new BpmServiceException(

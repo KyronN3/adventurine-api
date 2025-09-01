@@ -128,6 +128,7 @@ class BPMController extends Controller
                     'Status'
                 ])
                 ->where('Office', $office)
+                ->distinct()
                 ->orderBy('Name1')
                 ->get();
 
@@ -164,6 +165,7 @@ class BPMController extends Controller
                 ])
                 ->where('vwActive.Office', $office)
                 ->where('ldrBpm.bpm_dateTaken', $date)
+                ->distinct()
                 ->orderBy('vwActive.Name1')
                 ->get();
 
