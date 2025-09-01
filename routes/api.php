@@ -78,6 +78,5 @@ Route::prefix('v1')->group(function () {
     // Employee data routes
     Route::prefix('/employees')->group(function () {
         Route::get('/office/{office}', [BpmController::class, 'getEmployeesByOffice']);
-        Route::get('/test', [BpmController::class, 'testDatabaseConnection']);
     });
 });
