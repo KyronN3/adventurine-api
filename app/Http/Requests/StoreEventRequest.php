@@ -31,7 +31,7 @@ class StoreEventRequest extends FormRequest
         ];
     }
 
-  
+   
     public function messages(): array
     {
         return [

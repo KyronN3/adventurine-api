@@ -33,7 +33,7 @@ class Recognition extends Model
         return $this->hasMany(RecognitionFile::class, 'recognition_id', 'id');
     }
 
-    public function image()
+    public function images()
     {
         return $this->hasMany(RecognitionImage::class, 'recognition_id', 'id');
     }

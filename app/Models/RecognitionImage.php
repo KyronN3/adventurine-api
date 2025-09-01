@@ -17,6 +17,6 @@ class RecognitionImage  extends Model
 
     public function event()
     {
-        return $this->belongsTo(Recognition::class, 'event_id', 'id');
+        return $this->belongsTo(Recognition::class, 'recognition_id', 'id');
     }
 }

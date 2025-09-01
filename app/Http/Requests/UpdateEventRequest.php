@@ -6,29 +6,30 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEventRequest extends FormRequest
 {
-   
+    
     public function authorize(): bool
     {
         return true;
     }
 
-    
+   
     public function rules(): array
     {
         return [
-            'event_name'        => 'sometimes|string|max:255',
-            'event_tags'        => 'sometimes|array',
+            'event_name'        => 'required|string|max:255',
+            'event_tags'        => 'required|array',
             'event_tags.*'      => 'string|max:50',
-            'event_description' => 'sometimes|string|nullable|max:1000',
-            'event_departments' => 'sometimes|array',
+            'event_description' => 'required|string|nullable|max:1000',
+            'event_departments' => 'required|array',
             'event_departments.*'=> 'string|max:50',
-            'event_date'        => 'sometimes|date_format:Y-m-d|nullable',
-            'event_activity'    => 'sometimes|string|nullable|max:255',
-            'event_venue'       => 'sometimes|string|nullable|max:255',
-            'event_mode'        => 'sometimes|string|nullable|max:100',
-            'event_forms'       => 'sometimes|array|nullable',
+            'event_date'        => 'required|date_format:Y-m-d|nullable',
+            'event_activity'    => 'required|string|nullable|max:255',
+            'event_venue'       => 'required|string|nullable|max:255',
+            'event_mode'        => 'required|string|nullable|max:100',
+            'event_forms'       => 'required|array|nullable',
             'event_created'     => 'sometimes|date_format:Y-m-d|nullable',
-            'event_status'      => 'sometimes|string|nullable|in:active,completed,cancelled',
+            // event status can be active, completed, cancelled, verified
+            'event_status'      => 'required|string|nullable|in:active,completed,cancelled,verified',
 
             'outcomes'                 => 'sometimes|array|nullable',
             'outcomes.*.title'         => 'required_with:outcomes|string|max:255',
@@ -47,7 +48,7 @@ class UpdateEventRequest extends FormRequest
         ];
     }
 
-   
+    
     public function messages(): array
     {
         return [

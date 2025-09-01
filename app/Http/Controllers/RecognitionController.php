@@ -37,7 +37,7 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::CREATION, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            LogMessages::recognition(RecognitionFunction::CREATION, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error('Error creating new recognition.');
         }
     }
@@ -52,7 +52,7 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::DELETE_PENDING, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            LogMessages::recognition(RecognitionFunction::DELETE_PENDING, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error('Error deleting pending recognition.');
         }
     }
@@ -67,7 +67,7 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::APPROVES, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            LogMessages::recognition(RecognitionFunction::APPROVES, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error('Error approving pending recognition.');
         }
     }
@@ -82,7 +82,7 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::REJECTS, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            LogMessages::recognition(RecognitionFunction::REJECTS, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error('Error rejecting pending recognition.');
         }
     }
@@ -99,8 +99,9 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::SEARCH_ALL, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
-            return ResponseFormat::error('Error fetching all recognition.');
+            LogMessages::recognition(RecognitionFunction::SEARCH_ALL, LayerLevel::CONTROLLER, LogLevel::ERROR);
+            return ResponseFormat::error($e->getMessage());
+            //'Error fetching all recognition.'
         }
     }
 
@@ -114,7 +115,7 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::SEARCH_BY_ID, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            LogMessages::recognition(RecognitionFunction::SEARCH_BY_ID, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error("Error fetching recognition id: {$id}.");
         }
     }
@@ -129,7 +130,7 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::SEARCH_BY_DEPARTMENT, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            LogMessages::recognition(RecognitionFunction::SEARCH_BY_DEPARTMENT, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error("Error fetching recognition for {$department}.");
         }
     }
@@ -144,7 +145,7 @@ class RecognitionController extends Controller
         } catch (RecognitionServiceException $e) {
             return ResponseFormat::error($e->getMessage());
         } catch (\Exception $e) {
-            LogMessages::recognition(RecognitionFunction::SEARCH_HISTORY, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            LogMessages::recognition(RecognitionFunction::SEARCH_HISTORY, LayerLevel::CONTROLLER, LogLevel::ERROR);
             return ResponseFormat::error('Error fetching recognition history.');
         }
     }
