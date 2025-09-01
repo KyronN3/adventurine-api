@@ -88,13 +88,16 @@ Route::prefix('v1')->group(function () {
 
 // Event routes
     Route::prefix('/event')->group(function () {
-        Route::get('search/all', [EventController::class, 'getEvents']);
-        Route::get('search/{id}', [EventController::class, 'getEventById']);
-        Route::get('search/status', [EventController::class, 'getEventsByStatus']);
-        Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-        Route::get('search/past', [EventController::class, 'getPastEvents']);
-        Route::get('{event}', [EventController::class, 'show']);
-    });
+    Route::get('search/all', [EventController::class, 'getEvents']);
+    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
+    Route::get('search/{id}', [EventController::class, 'getEventById']);
+    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
+    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
+    Route::get('search/past', [EventController::class, 'PastEvents']);
+    Route::get('search', [EventController::class, 'searchEventsName']);
+    Route::get('{event}', [EventController::class, 'show']);
+});
+
 });
 
 
