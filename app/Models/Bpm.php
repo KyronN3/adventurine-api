@@ -10,7 +10,7 @@ class Bpm extends Model
     use HasFactory;
 
     // laravel sets the table name to 'b_p_m_s', which is ugly. this fix that - velvet underground 🍌
-    protected $table = 'bpm';
+    protected $table = 'ldrBpm';
 
     protected $fillable = [
         // subject to change if mag add na ang employee table - velvet underground 🍌

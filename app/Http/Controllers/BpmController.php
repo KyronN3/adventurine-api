@@ -147,15 +147,15 @@ class BPMController extends Controller
     public function getBpmByOfficeAndDate(string $office, string $date): JsonResponse
     {
         try {
-            $bpmRecords = DB::table('bpm')
-                ->leftJoin('vwActive', 'bpm.control_no', '=', 'vwActive.ControlNo')
+            $bpmRecords = DB::table('ldrBpm')
+                ->leftJoin('vwActive', 'ldrBpm.control_no', '=', 'vwActive.ControlNo')
                 ->select([
-                    'bpm.id',
-                    'bpm.control_no',
-                    'bpm.medical_history',
-                    'bpm.bpm_systolic',
-                    'bpm.bpm_diastolic',
-                    'bpm.bpm_dateTaken',
+                    'ldrBpm.id',
+                    'ldrBpm.control_no',
+                    'ldrBpm.medical_history',
+                    'ldrBpm.bpm_systolic',
+                    'ldrBpm.bpm_diastolic',
+                    'ldrBpm.bpm_dateTaken',
                     'vwActive.Name1 as employee_name',
                     'vwActive.Office as Office',
                     'vwActive.Sex as Sex',
@@ -163,7 +163,7 @@ class BPMController extends Controller
                     'vwActive.Status as Status'
                 ])
                 ->where('vwActive.Office', $office)
-                ->where('bpm.bpm_dateTaken', $date)
+                ->where('ldrBpm.bpm_dateTaken', $date)
                 ->orderBy('vwActive.Name1')
                 ->get();
 
@@ -187,7 +187,7 @@ class BPMController extends Controller
             $vwActiveExists = in_array('vwActive', $tableNames);
 
             // Get BPM table info
-            $bpmCount = DB::table('bpm')->count();
+            $bpmCount = DB::table('ldrBpm')->count();
 
             // Try to query vwActive if it exists
             $vwActiveInfo = null;

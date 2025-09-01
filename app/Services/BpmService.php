@@ -17,9 +17,9 @@ class BpmService
     public function getAllBpms(): Collection
     {
         try {
-            return Bpm::leftJoin('vwActive', 'bpm.control_no', '=', 'vwActive.ControlNo')
+            return Bpm::leftJoin('vwActive', 'ldrBpm.control_no', '=', 'vwActive.ControlNo')
                 ->select(
-                    'bpm.*',
+                    'ldrBpm.*',
                     'vwActive.Name1 as employee_name',
                     'vwActive.Sex',
                     'vwActive.Office',
