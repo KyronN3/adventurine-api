@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BPMController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,20 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
         Route::get('search/past', [EventController::class, 'getPastEvents']);
         Route::get('{event}', [EventController::class, 'show']);
+    });
+
+    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
+    // that didn't age quite well - velvet underground 🍌
+    Route::prefix('/bpm')->group(function () {
+        Route::get('', [BPMController::class, 'getBpm']);
+        Route::post('/create', [BPMController::class, 'store']);
+        Route::put('/{bpm}', [BPMController::class, 'update']);
+        Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
+    });
+
+    // Employee data routes
+    Route::prefix('/employees')->group(function () {
+        Route::get('/office/{office}', [BpmController::class, 'getEmployeesByOffice']);
     });
 
 });
