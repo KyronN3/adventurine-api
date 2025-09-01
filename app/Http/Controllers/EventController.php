@@ -6,6 +6,7 @@ use App\Components\ResponseFormat;
 use App\Exceptions\EventServiceException;
 use App\Http\Requests\CreateEventRequest;
 use App\Http\Requests\UpdateEventRequest;
+use App\Http\Requests\GetVerifiedEventsRequest;
 use App\Models\Event;
 use App\Services\EventService;
 use Illuminate\Http\JsonResponse;
@@ -92,7 +93,18 @@ class EventController extends Controller
             return ResponseFormat::error('Error updating event: ' . $e->getMessage(), 500);
         }
     }
-
+public function getVerifiedEvents(GetVerifiedEventsRequest $request): JsonResponse
+    {
+        try {
+            $events = $this->service->getVerifiedEvents();
+           
+            return ResponseFormat::success('Events retrieved successfully', $events);
+        } catch (\Exception $e) {
+            
+            return ResponseFormat::error('Error retrieving verified events: ' . $e->getMessage(), 500);
+        }
+    }
+    
 
     public function deleteEventById($id): JsonResponse
     {
