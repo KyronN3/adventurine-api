@@ -27,12 +27,10 @@ class RouteRoleVerifier
                 ],
             ]), 401);
         }
-
         $user = Auth::user();
         if ($user->hasRole('hr')) {
-
             $capture_original = json_decode($response->content(), true);
-            return response()->json(array_merge($capture_original, [
+            $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
                 'routes' => [
                     'path' => '/',
@@ -40,7 +38,7 @@ class RouteRoleVerifier
                     'children' => [
                         ['path' => '/', 'component' => '/src/pages/dashboard/HR-Dashboard.vue', 'name' => 'dashboard',],
                         ['path' => '/create-event', 'component' => '/src/pages/trainingEvents/CreateEventPage.vue', 'name' => 'createEvent',],
-                        ['path' => '/past-events', 'component' => '/src/pages/trainingEvents/PastEventsPage.vue', 'name' => 'pastEvents',],
+                        ['path' => '/past-events', 'component' => '/src/pages/trainingEvents/EventsPage.vue', 'name' => 'pastEvents',],
                         ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/EventDetail.vue', 'name' => 'eventDetail',],
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],
@@ -51,12 +49,18 @@ class RouteRoleVerifier
                     'name' => 'hr'
                 ]
             ]), 200);
+
+            /* Preserve All Headers from the Controller 😉👌*/
+            $newResponse->withHeaders($response->headers->all());
+
+            return $newResponse;
+
         }
 
         if ($user->hasRole('admin')) {
 
             $capture_original = json_decode($response->content(), true);
-            return response()->json(array_merge($capture_original, [
+            $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
                 'routes' => [
                     'path' => '/',
@@ -75,6 +79,10 @@ class RouteRoleVerifier
                     'name' => 'admin'
                 ],
             ]), 200);
+
+            /* Preserve All Headers from the Controller 😉👌*/
+            $newResponse->withHeaders($response->headers->all());
+            return $newResponse;
         }
 
         return $response;

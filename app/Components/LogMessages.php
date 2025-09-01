@@ -6,6 +6,7 @@ use App\Components\enum\LayerLevel;
 use App\Components\enum\LogLevel;
 use App\Components\enum\RecognitionFunction;
 use App\Components\enum\TrainingFunction;
+use App\Components\enum\BpmFunction;
 use Illuminate\Support\Facades\Log;
 
 // FOR LOG DEBUGGING
@@ -32,7 +33,7 @@ class LogMessages
 
     public static function training(TrainingFunction $function, LogLevel $log, LayerLevel $layer): void
     {
-
+        
         switch ($log) {
             case LogLevel::INFO:
                 Log::info("Training " . $function->value . " successfully in " . $layer->value . " layer.");
@@ -42,6 +43,21 @@ class LogMessages
                 break;
             case LogLevel::WARNING:
                 Log::warning("Training " . $function->value . " warning" . $layer->value . " layer.");
+                break;
+        }
+    }
+
+    public static function bpm(BpmFunction $function, LayerLevel $layer, LogLevel $log): void
+    {
+        switch ($log) {
+            case LogLevel::INFO:
+                Log::info("BPM " . $function->name . " successfully in " . $layer->value . " layer.");
+                break;
+            case LogLevel::ERROR:
+                Log::error("BPM " . $function->name . " failed in " . $layer->value . " layer.");
+                break;
+            case LogLevel::WARNING:
+                Log::warning("BPM " . $function->name . " warning in " . $layer->value . " layer.");
                 break;
         }
     }

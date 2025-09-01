@@ -1,24 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BPMController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EventController;
 
 /*
-⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
-⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
-⠀⠀⢀⢀⢄⢬⢪⡪⡎⣆⡈⠚⠜⠕⠇⠗⠝⢕⢯⢫⣞⣯⣿⣻⡽⣏⢗⣗⠏⠀
-⠀⠪⡪⡪⣪⢪⢺⢸⢢⢓⢆⢤⢀⠀⠀⠀⠀⠈⢊⢞⡾⣿⡯⣏⢮⠷⠁⠀⠀
-⠀⠀⠀⠈⠊⠆⡃⠕⢕⢇⢇⢇⢇⢇⢏⢎⢎⢆⢄⠀⢑⣽⣿⢝⠲⠉⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⡿⠂⠠⠀⡇⢇⠕⢈⣀⠀⠁⠡⠣⡣⡫⣂⣿⠯⢪⠰⠂⠀⠀⠀⠀
-⠀⠀⠀⠀⡦⡙⡂⢀⢤⢣⠣⡈⣾⡃⠠⠄⠀⡄⢱⣌⣶⢏⢊⠂⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢝⡲⣜⡮⡏⢎⢌⢂⠙⠢⠐⢀⢘⢵⣽⣿⡿⠁⠁⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠨⣺⡺⡕⡕⡱⡑⡆⡕⡅⡕⡜⡼⢽⡻⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣼⣳⣫⣾⣵⣗⡵⡱⡡⢣⢑⢕⢜⢕⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣴⣿⣾⣿⣿⣿⡿⡽⡑⢌⠪⡢⡣⣣⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⡟⡾⣿⢿⢿⢵⣽⣾⣼⣘⢸⢸⣞⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    * Welcome Message
 */
 
 Route::get('/welcome', function () {
@@ -27,24 +16,59 @@ Route::get('/welcome', function () {
     ], 200);
 });
 
+
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    /*
+    * Authentication 🔐
+    */
+    Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // HR event routes ✍️
+    Route::prefix('/hr')->group(function () {
+        Route::post('/event/create', [EventController::class, 'createNewEventStore']);
+        Route::put('/event/{event}', [EventController::class, 'update']);
+        Route::delete('/event/{event}', [EventController::class, 'destroy']);
+    });
+
+    // Event routes
+    Route::prefix('/event')->group(function () {
+        Route::get('search/all', [EventController::class, 'getEvents']);
+        Route::get('search/{id}', [EventController::class, 'getEventById']);
+        Route::get('search/status', [EventController::class, 'getEventsByStatus']);
+        Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
+        Route::get('search/past', [EventController::class, 'getPastEvents']);
+        Route::get('{event}', [EventController::class, 'show']);
+    });
+
+    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
+    // that didn't age quite well - velvet underground 🍌
+    Route::prefix('/bpm')->group(function () {
+        Route::get('', [BPMController::class, 'getBpm']);
+        Route::post('/create', [BPMController::class, 'store']);
+        Route::put('/{bpm}', [BPMController::class, 'update']);
+        Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
+    });
+
+    // Employee data routes
+    Route::prefix('/employees')->group(function () {
+        Route::get('/office/{office}', [BpmController::class, 'getEmployeesByOffice']);
+    });
+
+});
+
+
 /*
-    * Authentication
+    * Below for no Auth Route ❗❗❗.
+    * If you want the route to have Auth move the route above. Leave the v1 prefix ❗❗❗.
 */
 
 Route::prefix('v1')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier');
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [AuthController::class, 'logout']);
-
-    });
-
     // Future: Strictly role base access here
     Route::prefix('/admin')->group(function () {
         Route::prefix('/recognition')->group(function () {
             Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
-            
             Route::post('/delete/{id}', [RecognitionController::class, 'deletePendingRecognition']);
             Route::put('/approve/{id}', [RecognitionController::class, 'approveRecognition']);
             Route::put('/reject/{id}', [RecognitionController::class, 'rejectRecognition']);;
@@ -60,20 +84,8 @@ Route::prefix('v1')->group(function () {
     });
 
 
-    
-    // HR event routes
-    Route::prefix('/hr')->group(function () {
-        Route::post('/event/create', [EventController::class, 'createNewEvent']);
-        Route::put('/event/{event}', [EventController::class, 'updateEvent']);
-        Route::delete('/event/{event}', [EventController::class, 'deleteEventById']);
-    });
-
-
-      // Event routes
-    
-
-
-  Route::prefix('/event')->group(function () {
+// Event routes
+    Route::prefix('/event')->group(function () {
     Route::get('search/all', [EventController::class, 'getEvents']);
     Route::get('verified', [EventController::class, 'getVerifiedEvents']);
     Route::get('search/{id}', [EventController::class, 'getEventById']);
@@ -84,5 +96,6 @@ Route::prefix('v1')->group(function () {
     Route::get('{event}', [EventController::class, 'show']);
 });
 
-
 });
+
+

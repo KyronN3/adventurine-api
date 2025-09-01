@@ -10,26 +10,28 @@ class Event extends Model
     /** @use HasFactory<\Database\Factories\EventFactory> */
     use HasFactory;
 
+    protected $table = 'ldrEvents';
     protected $fillable = [
         'event_name',
-        'event_tags',
+        'event_types',
+        'event_duration',
         'event_description',
         'event_departments',
         'event_date',
-        'event_activity',
-        'event_venue',
-        'event_mode',
+        'event_end_date',
+        'event_location',
+        'event_model',
         'event_forms',
-        'event_created',
         'event_status',
+        'event_verify',
     ];
 
     protected $casts = [
-        'event_tags' => 'array',
+        'event_types' => 'array',
         'event_departments' => 'array',
         'event_forms' => 'array',
-        'event_date' => 'date',
-        'event_created' => 'date',
+        'event_date' => 'date:Y-m-d ',
+        'event_end_date' => 'date:Y-m-d ',
     ];
 
     public function outcomes()
@@ -46,6 +48,8 @@ class Event extends Model
     {
         return $this->hasMany(EventParticipant::class, 'event_id', 'id');
     }
+
+
 }
 
 
