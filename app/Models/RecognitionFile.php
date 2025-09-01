@@ -9,6 +9,7 @@ class RecognitionFile extends Model
 {
     use HasFactory;
 
+    protected $table = 'ldrRecognitionFiles';
     protected $fillable = [
         'id',
         'recognition_id',

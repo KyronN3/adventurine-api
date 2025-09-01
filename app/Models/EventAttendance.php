@@ -9,7 +9,7 @@ class EventAttendance extends Model
 {
     use HasFactory;
 
-    protected $table = 'event_attendance';
+    protected $table = 'ldrEvent_attendance';
 
     protected $fillable = [
         'event_id',

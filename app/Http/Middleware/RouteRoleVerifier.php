@@ -27,12 +27,10 @@ class RouteRoleVerifier
                 ],
             ]), 401);
         }
-
         $user = Auth::user();
         if ($user->hasRole('hr')) {
-
             $capture_original = json_decode($response->content(), true);
-            return response()->json(array_merge($capture_original, [
+            $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
                 'routes' => [
                     'path' => '/',
@@ -45,18 +43,24 @@ class RouteRoleVerifier
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],
                         ['path' => '/recognition-history', 'component' => '/src/pages/recognition/RecognitionHistoryPage.vue', 'name' => 'recognitionHistory',],
-                        ['path' => '/profile', 'component' => '/src/pages/client/ProfilePage.vue', 'name' => 'profile',],
+                        ['path' => '/profile', 'component' => '/src/pages/client/HRProfilePage.vue', 'name' => 'profile',],
                         ['path' => '/attendance', 'component' => '/src/components/AttendancePage.vue', 'name' => 'attendance',],
                     ],
                     'name' => 'hr'
                 ]
             ]), 200);
+
+            /* Preserve All Headers from the Controller 😉👌*/
+            $newResponse->withHeaders($response->headers->all());
+
+            return $newResponse;
+
         }
 
         if ($user->hasRole('admin')) {
 
             $capture_original = json_decode($response->content(), true);
-            return response()->json(array_merge($capture_original, [
+            $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
                 'routes' => [
                     'path' => '/',
@@ -69,11 +73,16 @@ class RouteRoleVerifier
                         ['path' => '/finished-events', 'component' => '/src/pages/trainingEvents/admin/FinishedEventsPage.vue', 'name' => 'finishedEvents',],
                         ['path' => '/create-recognition', 'component' => '/src/pages/recognition/admin/AdminCreateRecognition.vue', 'name' => 'createRecognition',],
                         ['path' => '/admin-recognition-history', 'component' => '/src/pages/recognition/admin/AdminRecognitionHistory.vue', 'name' => 'adminRecognitionHistory',],
+                        ['path' => '/profile', 'component' => '/src/pages/client/AdminProfilePage.vue', 'name' => 'profile',],
                         ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/admin/EventDetail.vue', 'name' => 'adminEventDetail',],
                     ],
                     'name' => 'admin'
                 ],
             ]), 200);
+
+            /* Preserve All Headers from the Controller 😉👌*/
+            $newResponse->withHeaders($response->headers->all());
+            return $newResponse;
         }
 
         return $response;

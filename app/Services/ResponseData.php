@@ -34,4 +34,29 @@ class ResponseData
             'fileUrls' => $fileUrls,
         ];
     }
+
+
+    public static function event($event,): array
+    {
+        return [
+            'id' => $event->id ?? '',
+            'eventName' => $event->event_name ?? '',
+            'eventDescription' => $event->event_description ?? '',
+            'eventDate' => $event->event_date?->format('Y-m-d') ?? null,
+            'eventVenue' => $event->event_venue ?? '',
+            'eventMode' => $event->event_mode ?? '',
+            'eventActivity' => $event->event_activity ?? '',
+            'eventTags' => $event->event_tags ?? [],
+            'eventDepartments' => $event->event_departments ?? [],
+            'eventForms' => $event->event_forms ?? [],
+            'eventCreated' => $event->created_at?->format('Y-m-d') ?? null,
+            'eventStatus' => $event->status ?? '',
+
+            'outcomes' => $event->outcomes ?? [],
+            'participants' => $event->participants ?? [],
+            'attendance' => $event->attendance ?? [],
+        ];
+    }
+
+
 }

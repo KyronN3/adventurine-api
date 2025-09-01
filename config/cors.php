@@ -19,7 +19,15 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://localhost:9000', 'http://localhost:9000', 'https://192.168.150.183:6969', 'http://192.168.150.183:6969'],
+    'allowed_origins' => [
+        'https://localhost:9000',
+        'http://localhost:9000',
+        'https://192.168.150.183:6969',
+        'http://192.168.150.183:6969',
+        'http://192.168.150.181:9000',
+        'https://192.168.150.181:9000',
+        'https://localhost:3000',
+        'http://localhost:3000'],
 
     'allowed_origins_patterns' => [],
 

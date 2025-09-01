@@ -9,7 +9,7 @@ class Recognition extends Model
 {
     use HasFactory;
 
-    protected $table = 'recognitions'; // your DB table name
+    protected $table = 'ldrRecognitions'; // your DB table name
 
     protected $fillable = [
         'status',

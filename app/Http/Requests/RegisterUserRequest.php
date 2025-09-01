@@ -7,20 +7,22 @@ use Illuminate\Validation\Rules\Password;
 
 class RegisterUserRequest extends FormRequest
 {
-   
+
     public function authorize(): bool
     {
         return true;
     }
 
-    
+
     public function rules(): array
     {
         return [
-            'name' => 'required|max:60|',
-            'email' => 'required|email|unique:users,email|max:100',
-            'role' => 'required|in:hr,admin',
-            'password' => ['required', 'confirmed', Password::min(8)
+            'name' => 'bail|required|max:60|',
+            'email' => 'bail|required|email|unique:users,email|max:100',
+            'role' => 'bail|required|in:hr,admin',
+            'position' => 'bail|required|string|max:60',
+            'office' => 'bail|nullable|string|max:100',
+            'password' => ['bail', 'required', 'confirmed', Password::min(8)
                 ->symbols()
                 ->numbers()
                 ->letters()
@@ -31,11 +33,13 @@ class RegisterUserRequest extends FormRequest
         ];
     }
 
-    protected function prepareForValidation()
+    protected function prepareForValidation(): void
     {
         $this->merge([
             'name' => $this->input('fullname'),
             'email' => $this->input('email'),
+            'position' => $this->input('position'),
+            'office' => $this->input('office'),
             'role' => $this->input('role'),
             'password' => $this->input('password'),
             'password_confirmation' => $this->input('passwordConfirmation')

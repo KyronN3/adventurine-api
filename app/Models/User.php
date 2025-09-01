@@ -8,41 +8,45 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
-
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, HasRoles;
+    use HasFactory, Notifiable, HasApiTokens;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-
+    protected $table = 'ldrUser';
     protected $fillable = [
         'name',
         'email',
         'password',
+        'position',
+        'office'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    public function roles()
+    {
+        /* Many-to-Many 👌*/
+        return $this->belongsToMany(Role::class, 'ldrRole_user')->withTimestamps();
+    }
+
+    public function assignRole($role): void
+    {
+        $roleId = Role::where('name', $role)->first();
+        if ($roleId) {
+            $this->roles()->attach($roleId->id);
+        }
+    }
+
+    public function hasRole($role): bool
+    {
+        return (bool)$this->roles()->where('name', $role)->first();
+    }
+
     protected function casts(): array
     {
         return [

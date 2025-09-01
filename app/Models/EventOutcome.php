@@ -9,7 +9,7 @@ class EventOutcome extends Model
 {
     use HasFactory;
 
-    protected $table = 'event_outcomes';
+    protected $table = 'ldrEvent_outcomes';
 
     protected $fillable = [
         'event_id',

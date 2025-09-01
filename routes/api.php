@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EventController;
 use App\Http\Controllers\BpmController;
 
 /*
@@ -16,19 +16,31 @@ Route::get('/welcome', function () {
     ], 200);
 });
 
+
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    /*
+    * Authentication 🔐
+    */
+    Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // HR event routes ✍️
+    Route::prefix('/hr')->group(function () {
+        Route::post('/event/create', [EventController::class, 'createNewEventStore']);
+        Route::put('/event/{event}', [EventController::class, 'update']);
+        Route::delete('/event/{event}', [EventController::class, 'destroy']);
+    });
+
+});
+
+
 /*
-    * Authentication
+    * Below for no Auth Route ❗❗❗.
+    * If you want the route to have Auth move the route above. Leave the v1 prefix ❗❗❗.
 */
 
 Route::prefix('v1')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier');
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [AuthController::class, 'logout']);
-      
-    });
-
     // Future: Strictly role base access here
     Route::prefix('/admin')->group(function () {
         Route::prefix('/recognition')->group(function () {
@@ -49,14 +61,8 @@ Route::prefix('v1')->group(function () {
         Route::get('search/history', [RecognitionController::class, 'getRecognitionHistory']);;
     });
 
-    
-    Route::prefix('/hr')->group(function () {
-        Route::post('/event/create', [EventController::class, 'createNewEvent']);
-        Route::put('/event/{event}', [EventController::class, 'update']);
-        Route::delete('/event/{event}', [EventController::class, 'destroy']);
-    });
 
-    
+// Event routes
     Route::prefix('/event')->group(function () {
         Route::get('search/all', [EventController::class, 'getEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
