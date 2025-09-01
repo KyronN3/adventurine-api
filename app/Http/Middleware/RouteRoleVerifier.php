@@ -38,7 +38,7 @@ class RouteRoleVerifier
                     'children' => [
                         ['path' => '/', 'component' => '/src/pages/dashboard/HR-Dashboard.vue', 'name' => 'dashboard',],
                         ['path' => '/create-event', 'component' => '/src/pages/trainingEvents/CreateEventPage.vue', 'name' => 'createEvent',],
-                        ['path' => '/past-events', 'component' => '/src/pages/trainingEvents/PastEventsPage.vue', 'name' => 'pastEvents',],
+                        ['path' => '/past-events', 'component' => '/src/pages/trainingEvents/EventsPage.vue', 'name' => 'pastEvents',],
                         ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/EventDetail.vue', 'name' => 'eventDetail',],
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],

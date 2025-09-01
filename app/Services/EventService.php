@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\EventServiceException;
 use App\Models\Event;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EventService
@@ -60,7 +61,7 @@ class EventService
                     , '', 409);
             }
 
-            $data['event_created'] = now()->format('Y-m-d');
+            $data['event_date'] = Carbon::parse($data['event_date'])->format('Y-m-d');
             $data['event_status'] = $data['event_status'] ?? 'active';
 
             $event = Event::create($data);
