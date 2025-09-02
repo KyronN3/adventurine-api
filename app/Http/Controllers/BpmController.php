@@ -121,7 +121,7 @@ class BPMController extends Controller
             $employees = DB::table('vwActive')
                 ->select([
                     'ControlNo',
-                    'Name1',
+                    'Name3',
                     'Office',
                     'Sex',
                     'Designation',
@@ -129,7 +129,7 @@ class BPMController extends Controller
                 ])
                 ->where('Office', $office)
                 ->distinct()
-                ->orderBy('Name1')
+                ->orderBy('Name3')
                 ->get();
 
             if ($employees->isEmpty()) {
@@ -157,7 +157,7 @@ class BPMController extends Controller
                     'ldrBpm.bpm_systolic',
                     'ldrBpm.bpm_diastolic',
                     'ldrBpm.bpm_dateTaken',
-                    'vwActive.Name1 as employee_name',
+                    'vwActive.Name3 as employee_name',
                     'vwActive.Office as Office',
                     'vwActive.Sex as Sex',
                     'vwActive.Designation as Designation',
@@ -166,7 +166,7 @@ class BPMController extends Controller
                 ->where('vwActive.Office', $office)
                 ->where('ldrBpm.bpm_dateTaken', $date)
                 ->distinct()
-                ->orderBy('vwActive.Name1')
+                ->orderBy('vwActive.Name3')
                 ->get();
 
             return ResponseFormat::success('BPM records retrieved successfully', $bpmRecords);
