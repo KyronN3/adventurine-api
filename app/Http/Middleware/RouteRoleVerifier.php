@@ -32,6 +32,7 @@ class RouteRoleVerifier
             $capture_original = json_decode($response->content(), true);
             $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
+                'office' => $user->office,
                 'routes' => [
                     'path' => '/',
                     'component' => 'src/layouts/HR-pageMain.vue',
@@ -62,6 +63,7 @@ class RouteRoleVerifier
             $capture_original = json_decode($response->content(), true);
             $newResponse = response()->json(array_merge($capture_original, [
                 'role' => $user->roles->pluck('name'),
+                'office' => $user->office,
                 'routes' => [
                     'path' => '/',
                     'component' => 'src/layouts/Admin-pageMain.vue',

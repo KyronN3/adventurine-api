@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreBPMRequest;
-use App\Models\Bpm;
-use App\Services\BpmService;
-use App\Components\ResponseFormat;
-use App\Exceptions\BpmServiceException;
 use App\Components\enum\BpmFunction;
 use App\Components\enum\LayerLevel;
 use App\Components\enum\LogLevel;
 use App\Components\LogMessages;
+use App\Components\ResponseFormat;
+use App\Exceptions\BpmServiceException;
+use App\Http\Requests\StoreBPMRequest;
+use App\Models\Bpm;
+use App\Services\BpmService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class BPMController extends Controller
 {
     protected BpmService $service;
-    
+
     public function __construct(BpmService $service)
     {
         $this->service = $service;
@@ -46,7 +46,7 @@ class BPMController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            
+
             // checker just in case if non batch was requested
             if (isset($validatedData['bpm_entries'])) {
                 // batch
@@ -56,7 +56,7 @@ class BPMController extends Controller
                 $response = $this->service->createNewBpm($validatedData);
                 $message = 'New BPM record created successfully!';
             }
-            
+
             LogMessages::bpm(BpmFunction::CREATION, LayerLevel::CONTROLLER, LogLevel::INFO);
             return ResponseFormat::success($message, $response, 201);
         } catch (BpmServiceException $e) {
@@ -128,8 +128,7 @@ class BPMController extends Controller
                     'Status'
                 ])
                 ->where('Office', $office)
-                ->distinct()
-                ->orderBy('Name1')
+                ->orderBy('Name2')
                 ->get();
 
             if ($employees->isEmpty()) {

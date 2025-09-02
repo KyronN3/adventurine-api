@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BPMController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\RecognitionController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,17 +17,27 @@ Route::get('/welcome', function () {
     ], 200);
 });
 
+/*
+    * Getting Office Data 🙂
+*/
+
+Route::get('/getOffice', function () {
+    return response()->json([
+        'meesage' => 'Office Data',
+        'data' => DB::table('vwofficearrangement')->pluck('Office')]);
+});
 
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     /*
     * Authentication 🔐
     */
+
     Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
     Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // HR event routes ✍️
-    Route::prefix('/hr')->group(function () {
+    Route::prefix('hr')->group(function () {
         Route::post('/event/create', [EventController::class, 'createNewEventStore']);
         Route::put('/event/{event}', [EventController::class, 'update']);
         Route::delete('/event/{event}', [EventController::class, 'destroy']);
@@ -35,29 +46,28 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Event routes
     Route::prefix('/event')->group(function () {
         Route::get('search/all', [EventController::class, 'getEvents']);
+        Route::get('verified', [EventController::class, 'getVerifiedEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-        Route::get('search/past', [EventController::class, 'getPastEvents']);
-        Route::get('{event}', [EventController::class, 'show']);
+        Route::get('search/past', [EventController::class, 'PastEvents']);
+        Route::get('search', [EventController::class, 'searchEventsName']);
     });
 
-    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
-    // that didn't age quite well - velvet underground 🍌
+    // BPM routes
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BPMController::class, 'getBpm']);
         Route::post('/create', [BPMController::class, 'store']);
         Route::put('/{bpm}', [BPMController::class, 'update']);
-        Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
+        Route::get('/office/{office}/date/{date}', [BPMController::class, 'getBpmByOfficeAndDate']);
     });
 
     // Employee data routes
     Route::prefix('/employees')->group(function () {
-        Route::get('/office/{office}', [BpmController::class, 'getEmployeesByOffice']);
+        Route::get('/office/{office}', [BPMController::class, 'getEmployeesByOffice']);
     });
 
 });
-
 
 /*
     * Below for no Auth Route ❗❗❗.
@@ -84,20 +94,6 @@ Route::prefix('v1')->group(function () {
         Route::get('search/recent', [RecognitionController::class, 'getRecognitionRecent']);;
         Route::get('search/history', [RecognitionController::class, 'getRecognitionHistory']);;
     });
-
-
-// Event routes
-    Route::prefix('/event')->group(function () {
-    Route::get('search/all', [EventController::class, 'getEvents']);
-    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
-    Route::get('search/{id}', [EventController::class, 'getEventById']);
-    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
-    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-    Route::get('search/past', [EventController::class, 'PastEvents']);
-    Route::get('search', [EventController::class, 'searchEventsName']);
-    Route::get('{event}', [EventController::class, 'show']);
-});
-
 });
 
 
