@@ -115,31 +115,7 @@ class BPMController extends Controller
     /**
      * Get employees by office from vwActive view.
      */
-    public function getEmployeesByOffice(string $office): JsonResponse
-    {
-        try {
-            $employees = DB::table('vwActive')
-                ->select([
-                    'ControlNo',
-                    'Name1',
-                    'Office',
-                    'Sex',
-                    'Designation',
-                    'Status'
-                ])
-                ->where('Office', $office)
-                ->orderBy('Name2')
-                ->get();
 
-            if ($employees->isEmpty()) {
-                return ResponseFormat::success('No employees found for this office', []);
-            }
-
-            return ResponseFormat::success('Employees retrieved successfully', $employees);
-        } catch (\Exception $e) {
-            return ResponseFormat::error('Error retrieving employees: ' . $e->getMessage(), 500);
-        }
-    }
 
     /**
      * Get BPM records by office and date.
@@ -164,7 +140,6 @@ class BPMController extends Controller
                 ])
                 ->where('vwActive.Office', $office)
                 ->where('ldrBpm.bpm_dateTaken', $date)
-                ->distinct()
                 ->orderBy('vwActive.Name1')
                 ->get();
 

@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BPMController;
+use App\Http\Controllers\EmployeesAndOfficeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\RecognitionController;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,11 +21,6 @@ Route::get('/welcome', function () {
     * Getting Office Data 🙂
 */
 
-Route::get('/getOffice', function () {
-    return response()->json([
-        'meesage' => 'Office Data',
-        'data' => DB::table('vwofficearrangement')->pluck('Office')]);
-});
 
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     /*
@@ -62,9 +57,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/office/{office}/date/{date}', [BPMController::class, 'getBpmByOfficeAndDate']);
     });
 
+    // Office Data
+    Route::get('/getOffice', [EmployeesAndOfficeController::class, 'getOffice']);
+
     // Employee data routes
     Route::prefix('/employees')->group(function () {
-        Route::get('/office/{office}', [BPMController::class, 'getEmployeesByOffice']);
+        Route::get('/office/{office}', [EmployeesAndOfficeController::class, 'getEmployeesByOffice']);
     });
 
 });
