@@ -30,6 +30,7 @@ class UpdateEventRequest extends FormRequest
             'event_created'     => 'sometimes|date_format:Y-m-d|nullable',
             // event status can be active, completed, cancelled, verified
             'event_status'      => 'required|string|nullable|in:active,completed,cancelled,verified',
+            'event_verify' => 'sometimes|in:verified,unverified',
 
             'outcomes'                 => 'sometimes|array|nullable',
             'outcomes.*.title'         => 'required_with:outcomes|string|max:255',
@@ -59,6 +60,7 @@ class UpdateEventRequest extends FormRequest
             'event_mode.max' => 'Event mode cannot exceed 100 characters.',
             'event_activity.max' => 'Event activity cannot exceed 255 characters.',
             'event_status.in' => 'Event status must be active, completed, or cancelled.',
+            'event_verify.in' => 'Event verify must be either verified or unverified.',
             'event_tags.*.max' => 'Event tag cannot exceed 50 characters.',
             'event_departments.*.max' => 'Department name cannot exceed 50 characters.',
             'outcomes.*.title.required_with' => 'Outcome title is required when outcomes are provided.',
