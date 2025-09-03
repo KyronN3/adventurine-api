@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Http\Requests\GetVerifiedEventsRequest;
 use App\Models\Event;
 use App\Services\EventService;
+use App\Services\ResponseData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -138,8 +139,9 @@ public function getVerifiedEvents(GetVerifiedEventsRequest $request): JsonRespon
     public function getEventById($id): JsonResponse
     {
         try {
-            $event = $this->service->getEventById($id);
-            return ResponseFormat::success('Event retrieved successfully', $event);
+            $event = $this->service->getEventById($id);     
+            $data = ResponseData::event($event->array());
+            return ResponseFormat::success('Event retrieved successfully', $$data);
         } catch (EventServiceException $e) {
             return ResponseFormat::error($e->getMessage(), 404);
         } catch (\Exception $e) {
