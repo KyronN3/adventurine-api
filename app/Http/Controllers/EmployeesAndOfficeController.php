@@ -12,15 +12,15 @@ class EmployeesAndOfficeController extends Controller
     public function getEmployeesByOffice(string $office): JsonResponse
     {
         try {
-            $employees = Cache::remember('employee', now()->addDay(), function () use ($office) {
+            $employees = Cache::remember('employee_' . $office, now()->addDay(), function () use ($office) {
                 return DB::table('vwActive')->select([
                     'ControlNo',
-                    'Name1',
+                    'Name4',
                     'Office',
                     'Sex',
                     'Designation',
                     'Status'
-                ])->where('Office', $office)->orderBy('Name1')->get();
+                ])->where('Office', $office)->orderBy('Name4')->get();
             });
 
             if ($employees->isEmpty()) {
