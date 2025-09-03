@@ -9,7 +9,7 @@ class RecognitionImage extends Model
 {
     use HasFactory;
 
-    protected $table = 'ldrRecognitionImage';
+    protected $table = 'ldrRecognition_images';
     protected $fillable = [
         'id',
         'event_id',

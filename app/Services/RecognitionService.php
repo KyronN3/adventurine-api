@@ -96,9 +96,7 @@ class RecognitionService
 
             throw new RecognitionServiceException(
                 "Error creating new recognition.",
-                $e->getMessage(),
-                $e->getCode(),
-                $e);
+                $e->getMessage());
         }
     }
 

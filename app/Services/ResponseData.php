@@ -30,8 +30,8 @@ class ResponseData
             'recognitionType' => $recognition->recognition_type ?? '',
             'achievementDescription' => $recognition->achievement_description ?? '',
 
-            'imageUrls' => $imageUrls,
-            'fileUrls' => $fileUrls,
+            'images' => $imageUrls,
+            'files' => $fileUrls,
         ];
     }
 
