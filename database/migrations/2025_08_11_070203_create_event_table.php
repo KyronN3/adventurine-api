@@ -19,11 +19,12 @@ return new class extends Migration {
             $table->json('event_departments');
             $table->string('event_duration');
             $table->date('event_date');
-            $table->string('event_end_date')->nullable();
+            $table->date('event_end_date')->nullable();
             $table->string('event_location');
             $table->string('event_model');
             $table->json('event_forms')->nullable();
             $table->string('event_status');
+            $table->string('event_verify');
             $table->timestamps();
         });
 

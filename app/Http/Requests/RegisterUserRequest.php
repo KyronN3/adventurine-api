@@ -20,8 +20,7 @@ class RegisterUserRequest extends FormRequest
             'name' => 'bail|required|max:60|',
             'email' => 'bail|required|email|unique:users,email|max:100',
             'role' => 'bail|required|in:hr,admin',
-            'position' => 'bail|required|string|max:60',
-            'office' => 'bail|nullable|string|max:100',
+            'office' => 'bail|required|string|max:100|exists:vwofficearrangement,office',
             'password' => ['bail', 'required', 'confirmed', Password::min(8)
                 ->symbols()
                 ->numbers()
@@ -38,7 +37,6 @@ class RegisterUserRequest extends FormRequest
         $this->merge([
             'name' => $this->input('fullname'),
             'email' => $this->input('email'),
-            'position' => $this->input('position'),
             'office' => $this->input('office'),
             'role' => $this->input('role'),
             'password' => $this->input('password'),

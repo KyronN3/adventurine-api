@@ -22,11 +22,14 @@ class CreateEventRequest extends FormRequest
             'event_duration' => 'bail|required|string|in:single,multi',
             'event_location' => 'bail|required|string|max:255',
             'event_model' => 'bail|required|string|max:100|in:in-house,external',
-            'event_end_date' => 'bail|nullable|string|max:255',
+            'event_end_date' => 'bail|nullable|string|date_format:Y-m-d',
             'event_types' => 'bail|required|string|max:50|in:seminar,training,workshop,orientation,conference,webinar,team_building, assessment',
-            'event_departments.*' => 'bail|string|max:50',
-            'event_forms' => 'bail|nullable|array',
-            'event_status' => 'bail|required|string|in:active,completed,cancelled',
+            'event_departments' => 'bail|required|array',
+            'event_departments.*' => 'bail|string|max:60',
+            'event_forms' => 'bail|required|array',
+            'event_forms.*' => 'bail|string|max:60',
+            'event_status' => 'bail|required|string|in:active,pending,completed,cancelled',
+            'event_verify' => 'bail|required|string|in:unverified,verified,past',
         ];
     }
 
@@ -44,6 +47,7 @@ class CreateEventRequest extends FormRequest
             'event_departments' => $this->input('eventDepartments'),
             'event_forms' => $this->input('eventForms'),
             'event_status' => $this->input('eventStatus'),
+            'event_verify' => $this->input('eventVerify'),
         ]);
     }
 
