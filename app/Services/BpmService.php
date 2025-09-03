@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Bpm;
 use App\Exceptions\BpmServiceException;
+use App\Models\Bpm;
 use Illuminate\Database\Eloquent\Collection;
 
 class BpmService

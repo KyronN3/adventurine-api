@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreBPMRequest;
-use App\Models\Bpm;
-use App\Services\BpmService;
-use App\Components\ResponseFormat;
-use App\Exceptions\BpmServiceException;
 use App\Components\enum\BpmFunction;
 use App\Components\enum\LayerLevel;
 use App\Components\enum\LogLevel;
 use App\Components\LogMessages;
+use App\Components\ResponseFormat;
+use App\Exceptions\BpmServiceException;
+use App\Http\Requests\StoreBPMRequest;
+use App\Models\Bpm;
+use App\Services\BpmService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class BPMController extends Controller
 {
     protected BpmService $service;
-    
+
     public function __construct(BpmService $service)
     {
         $this->service = $service;
@@ -46,7 +46,7 @@ class BPMController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            
+
             // checker just in case if non batch was requested
             if (isset($validatedData['bpm_entries'])) {
                 // batch
@@ -56,7 +56,7 @@ class BPMController extends Controller
                 $response = $this->service->createNewBpm($validatedData);
                 $message = 'New BPM record created successfully!';
             }
-            
+
             LogMessages::bpm(BpmFunction::CREATION, LayerLevel::CONTROLLER, LogLevel::INFO);
             return ResponseFormat::success($message, $response, 201);
         } catch (BpmServiceException $e) {
@@ -115,32 +115,7 @@ class BPMController extends Controller
     /**
      * Get employees by office from vwActive view.
      */
-    public function getEmployeesByOffice(string $office): JsonResponse
-    {
-        try {
-            $employees = DB::table('vwActive')
-                ->select([
-                    'ControlNo',
-                    'Name1',
-                    'Office',
-                    'Sex',
-                    'Designation',
-                    'Status'
-                ])
-                ->where('Office', $office)
-                ->distinct()
-                ->orderBy('Name1')
-                ->get();
 
-            if ($employees->isEmpty()) {
-                return ResponseFormat::success('No employees found for this office', []);
-            }
-
-            return ResponseFormat::success('Employees retrieved successfully', $employees);
-        } catch (\Exception $e) {
-            return ResponseFormat::error('Error retrieving employees: ' . $e->getMessage(), 500);
-        }
-    }
 
     /**
      * Get BPM records by office and date.
@@ -165,7 +140,6 @@ class BPMController extends Controller
                 ])
                 ->where('vwActive.Office', $office)
                 ->where('ldrBpm.bpm_dateTaken', $date)
-                ->distinct()
                 ->orderBy('vwActive.Name1')
                 ->get();
 

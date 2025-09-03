@@ -49,11 +49,6 @@ class EventController extends Controller
         }
     }
 
-    public function show(Event $event): JsonResponse
-    {
-        return ResponseFormat::success('Event retrieved successfully', $event);
-    }
-
 
     public function createNewEventStore(CreateEventRequest $request): JsonResponse
     {
@@ -70,7 +65,7 @@ class EventController extends Controller
 //            ));
 
             return ResponseFormat::creationSuccess('New event created successfully!',
-                // Auth::user()->hasRole('hr') ? 'hr' : 'admin',
+                Auth::user()->hasRole('hr'),
                 now(), $response, 201);
 
         } catch (EventServiceException $e) {

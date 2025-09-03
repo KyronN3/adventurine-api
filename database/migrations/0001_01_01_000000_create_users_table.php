@@ -14,8 +14,7 @@ return new class extends Migration {
             Schema::create('ldrUser', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
-                $table->string('position');
-                $table->string('office')->nullable();
+                $table->string('office');
                 $table->string('email')->unique();
                 $table->timestamp('email_verified_at')->nullable();
                 $table->string('password');
