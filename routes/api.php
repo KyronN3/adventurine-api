@@ -69,7 +69,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
     // Office Data
-    Route::get('/getOffice', [EmployeesAndOfficeController::class, 'getOffice']);
+    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice'])->withoutMiddleware(['auth:sanctum']);
 
     // Employee data routes
     Route::prefix('/employees')->group(function () {
