@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class BPMController extends Controller
+class BpmController extends Controller
 {
     protected BpmService $service;
 
@@ -132,7 +132,7 @@ class BPMController extends Controller
                     'ldrBpm.bpm_systolic',
                     'ldrBpm.bpm_diastolic',
                     'ldrBpm.bpm_dateTaken',
-                    'vwActive.Name1 as employee_name',
+                    'vwActive.Name4 as employee_name',
                     'vwActive.Office as Office',
                     'vwActive.Sex as Sex',
                     'vwActive.Designation as Designation',
@@ -140,7 +140,7 @@ class BPMController extends Controller
                 ])
                 ->where('vwActive.Office', $office)
                 ->where('ldrBpm.bpm_dateTaken', $date)
-                ->orderBy('vwActive.Name1')
+                ->orderBy('vwActive.Name4')
                 ->get();
 
             return ResponseFormat::success('BPM records retrieved successfully', $bpmRecords);

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class EventService
 {
-
     public function getAllEvents()
     {
         try {
