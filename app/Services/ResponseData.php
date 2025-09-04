@@ -8,12 +8,14 @@ class ResponseData
     {
         $imageUrls = array_map(fn($image) => [
             'id' => $image['id'] ?? '',
+            'name' => $image['name'] ?? '',
             'url' => $image['url'] ?? '',
             'expires' => $image['expires'] ?? '',
         ], $images);
 
         $fileUrls = array_map(fn($file) => [
             'id' => $file['id'] ?? '',
+            'name' => $file['name'] ?? '',
             'url' => $file['url'] ?? '',
             'expires' => $file['expires'] ?? '',
         ], $files);
