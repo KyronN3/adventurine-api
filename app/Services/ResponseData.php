@@ -4,6 +4,7 @@ namespace App\Services;
 
 class ResponseData
 {
+
     public static function recognition($recognition, array $images = [], array $files = []): array
     {
         $imageUrls = array_map(fn($image) => [
@@ -38,21 +39,25 @@ class ResponseData
     }
 
 
-    public static function event($event,): array
+    public static function event($event): array
     {
         return [
             'id' => $event->id ?? '',
             'eventName' => $event->event_name ?? '',
+            'eventType' => $event->event_type ?? '',
             'eventDescription' => $event->event_description ?? '',
-            'eventDate' => $event->event_date?->format('Y-m-d') ?? null,
-            'eventVenue' => $event->event_venue ?? '',
-            'eventMode' => $event->event_mode ?? '',
-            'eventActivity' => $event->event_activity ?? '',
-            'eventTags' => $event->event_tags ?? [],
             'eventDepartments' => $event->event_departments ?? [],
+            'eventDuration' => $event->event_duration ?? '',
+            'eventDate' => $event->event_date?->format('Y-m-d') ?? null,
+            'eventEndDate' => $event->event_end_date?->format('Y-m-d') ?? null,
+            'eventLocation' => $event->event_location ?? '',
+            'eventModel' => $event->event_model?? '',
             'eventForms' => $event->event_forms ?? [],
+            'eventActivity' => $event->event_activity ?? '',          
             'eventCreated' => $event->created_at?->format('Y-m-d') ?? null,
-            'eventStatus' => $event->status ?? '',
+            'eventStatus' => $event->event_status ?? '',
+            'eventVerify' => $event->event_verify ?? '',
+            'eventUpdated' => $event->updated_at?->format('Y-m-d') ?? null,
 
             'outcomes' => $event->outcomes ?? [],
             'participants' => $event->participants ?? [],

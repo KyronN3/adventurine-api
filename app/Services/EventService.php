@@ -31,6 +31,41 @@ class EventService
         }
     }
 
+    public function getVerifiedEvents()
+    {
+        try {
+            $query = Event::with(['outcomes', 'attendance', 'participants'])
+                ->where('event_verify', 'verified');
+
+            $events = $query->orderBy('event_date', 'desc')->get();
+
+            return $events;
+        } catch (\Exception $e) {
+
+            throw new EventServiceException('Failed to retrieve verified events: ' . $e->getMessage());
+        }
+    }
+
+    public function getEventsByStatus($status)
+    {
+        try {
+            $query = Event::with(['outcomes', 'attendance', 'participants']);
+            if ($status !== 'all') {
+                if (!in_array($status, ['active', 'verified', 'completed', 'cancelled'])) {
+                    throw new EventServiceException('Invalid status provided. Allowed values are: active, verified, completed, cancelled.');
+                }
+                $query->where('event_status', $status);
+            }
+
+            $events = $query->orderBy('event_date', 'desc')->get();
+
+            return $events;
+        } catch (\Exception $e) {
+
+            throw new EventServiceException('Failed to retrieve events by status: ' . $e->getMessage());
+        }
+    }
+
 
     public function createNewEvent($data)
     {
@@ -117,22 +152,6 @@ class EventService
         } catch (\Exception $e) {
             DB::rollBack();
             throw new EventServiceException('Failed to delete event: ' . $e->getMessage());
-        }
-    }
-
-
-    public function getEventsByStatus($status)
-    {
-        try {
-            $query = Event::with(['outcomes', 'attendance', 'participants']);
-
-            if ($status !== 'all') {
-                $query->where('event_status', $status);
-            }
-
-            return $query->orderBy('event_date', 'desc')->get();
-        } catch (\Exception $e) {
-            throw new EventServiceException('Failed to retrieve events by status: ' . $e->getMessage());
         }
     }
 

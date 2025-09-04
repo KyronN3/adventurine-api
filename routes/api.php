@@ -21,10 +21,15 @@ Route::get('/welcome', function () {
     ], 200);
 });
 
-Route::get('/test', function () {
-    return \App\Models\User::all();
-});
-Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
+/*
+    * Getting Office Data 🙂
+*/
+
+
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    /*
+    * Authentication 🔐
+    */
 
     Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
     Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
@@ -90,60 +95,72 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     });
 
     // BPM routes
+    Route::get('search/all', [EventController::class, 'getEvents']);
+    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
+    Route::get('search/{id}', [EventController::class, 'getEventById']);
+    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
+    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
+    Route::get('search/past', [EventController::class, 'PastEvents']);
+    Route::get('search', [EventController::class, 'searchEventsName']);
+    Route::get('{event}', [EventController::class, 'show']);
+
+    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
+// that didn't age quite well - velvet underground. 🍌
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
         Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
     });
 
-    // Office data routes
+// Office data routes
     Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice'])->withoutMiddleware(['auth:sanctum']);
 
-    // Employee data routes
+// Employee data routes
     Route::prefix('/employees')->group(function () {
         Route::get('/office/{office}', [EmployeesAndOfficeController::class, 'getEmployeesByOffice']);
     });
+});
 
 
-    // Media query
-    Route::prefix('/media')->group(function () {
-        Route::get('/{route}/{type}/{filename}', [MinioController::class, 'fetchFileNameV2'])
-            ->where('filename', '.*'); // <— this allows everything
+// Media query
+Route::prefix('/media')->group(function () {
+    Route::get('/{route}/{type}/{filename}', [MinioController::class, 'fetchFileNameV2'])
+        ->where('filename', '.*'); // <— this allows everything
 
-        Route::get('/stream/{route}/{type}/{filename}', function ($route, $type, $filename) {
-            try {
-                // Pick the correct disk based on route and type
-                $disk = match ($route) {
-                    'recognition' => match ($type) {
-                        'image' => Storage::disk(MinioBucket::RECOGNITION_IMAGE),
-                        'file' => Storage::disk(MinioBucket::RECOGNITION_FILE),
-                        default => throw new \InvalidArgumentException('Invalid type'),
-                    },
-                    'event' => match ($type) {
-                        'image' => Storage::disk(MinioBucket::EVENT_IMAGE),
-                        'file' => Storage::disk(MinioBucket::EVENT_FILE),
-                        default => throw new \InvalidArgumentException('Invalid type'),
-                    },
-                    default => throw new \InvalidArgumentException('Invalid route'),
-                };
+    Route::get('/stream/{route}/{type}/{filename}', function ($route, $type, $filename) {
+        try {
+            // Pick the correct disk based on route and type
+            $disk = match ($route) {
+                'recognition' => match ($type) {
+                    'image' => Storage::disk(MinioBucket::RECOGNITION_IMAGE),
+                    'file' => Storage::disk(MinioBucket::RECOGNITION_FILE),
+                    default => throw new \InvalidArgumentException('Invalid type'),
+                },
+                'event' => match ($type) {
+                    'image' => Storage::disk(MinioBucket::EVENT_IMAGE),
+                    'file' => Storage::disk(MinioBucket::EVENT_FILE),
+                    default => throw new \InvalidArgumentException('Invalid type'),
+                },
+                default => throw new \InvalidArgumentException('Invalid route'),
+            };
 
-                if (!$disk->exists($filename)) {
-                    return response()->json(['message' => 'File not found'], 404);
-                }
-
-                // Stream the file
-                return response()->stream(function () use ($disk, $filename) {
-                    echo $disk->get($filename);
-                }, 200, [
-                    'Content-Type' => $disk->mimeType($filename),
-                    'Content-Disposition' => 'inline; filename="' . $filename . '"',
-                    'Access-Control-Allow-Origin' => '*', // handle CORS
-                ]);
-
-            } catch (\Exception $e) {
-                return response()->json(['message' => $e->getMessage()], 500);
+            if (!$disk->exists($filename)) {
+                return response()->json(['message' => 'File not found'], 404);
             }
-        });
+
+            // Stream the file
+            return response()->stream(function () use ($disk, $filename) {
+                echo $disk->get($filename);
+            }, 200, [
+                'Content-Type' => $disk->mimeType($filename),
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+                'Access-Control-Allow-Origin' => '*', // handle CORS
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     });
 });
+
 
 
