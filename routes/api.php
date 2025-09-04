@@ -102,7 +102,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
     Route::get('search/past', [EventController::class, 'PastEvents']);
     Route::get('search', [EventController::class, 'searchEventsName']);
-    Route::get('{event}', [EventController::class, 'show']);
 
     // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
 // that didn't age quite well - velvet underground. 🍌
