@@ -21,9 +21,9 @@ class EmployeesAndOfficeController extends Controller
     public function getEmployeesByOffice(string $office): JsonResponse
     {
         try {
-            $key = ['ControlNo', 'Name2', 'Office', 'Sex', 'Designation', 'Status'];
+            $key = ['ControlNo', 'Name4', 'Office', 'Sex', 'Designation', 'Status'];
             $employees = Cache::remember($office, now()->addDay(), function () use ($office, $key) {
-                return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name1')->paginate(600);
+                return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name4')->paginate(600);
             });
 
             if ($employees->isEmpty()) {

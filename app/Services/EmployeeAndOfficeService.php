@@ -12,7 +12,7 @@ class EmployeeAndOfficeService
         foreach ($key as $employee) {
             $format = [
                 'controlno' => $employee->ControlNo,
-                'name' => $employee->Name2,
+                'name' => $employee->Name4,
                 'office' => $employee->Office,
                 'sex' => $employee->Sex,
                 'designation' => $employee->Designation,
