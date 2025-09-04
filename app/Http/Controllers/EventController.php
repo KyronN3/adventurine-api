@@ -136,19 +136,17 @@ public function getVerifiedEvents(GetVerifiedEventsRequest $request): JsonRespon
         }
     }
 
-    public function getEventById($id): JsonResponse
+  public function getEventById($id): JsonResponse
     {
         try {
-            $event = $this->service->getEventById($id);     
-            $data = ResponseData::event($event->array());
-            return ResponseFormat::success('Event retrieved successfully', $$data);
+            $event = $this->service->getEventById($id);
+            return ResponseFormat::success('Event retrieved successfully', $event);
         } catch (EventServiceException $e) {
             return ResponseFormat::error($e->getMessage(), 404);
         } catch (\Exception $e) {
             return ResponseFormat::error('Error retrieving event: ' . $e->getMessage(), 500);
         }
     }
-
     public function getPastEvents(): JsonResponse
     {
         try {

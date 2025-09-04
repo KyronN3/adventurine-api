@@ -35,7 +35,7 @@ class EventService
     {
         try {
             $query = Event::with(['outcomes', 'attendance', 'participants'])
-                         ->where('event_status', 'verified');
+                         ->where('event_verify', 'verified');
            
             $events = $query->orderBy('event_date', 'desc')->get();
            
