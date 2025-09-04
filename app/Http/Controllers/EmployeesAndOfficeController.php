@@ -3,30 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Components\ResponseFormat;
+use App\Services\EmployeeAndOfficeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class EmployeesAndOfficeController extends Controller
 {
+
+    protected EmployeeAndOfficeService $employeeAndOfficeService;
+
+    public function __construct(EmployeeAndOfficeService $employeeAndOfficeService)
+    {
+        $this->employeeAndOfficeService = $employeeAndOfficeService;
+    }
+
     public function getEmployeesByOffice(string $office): JsonResponse
     {
         try {
-            $employees = Cache::remember('employee', now()->addDay(), function () use ($office) {
-                return DB::table('vwActive')->select([
-                    'ControlNo',
-                    'Name1',
-                    'Office',
-                    'Sex',
-                    'Designation',
-                    'Status'
-                ])->where('Office', $office)->orderBy('Name1')->get();
+            $key = ['ControlNo', 'Name2', 'Office', 'Sex', 'Designation', 'Status'];
+            $employees = Cache::remember($office, now()->addDay(), function () use ($office, $key) {
+                return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name1')->paginate(600);
             });
 
             if ($employees->isEmpty()) {
                 return ResponseFormat::success('No employees found for this office', []);
             }
-            return ResponseFormat::success('Employees retrieved successfully', $employees);
+
+            return ResponseFormat::success('Employees retrieved successfully', $this->employeeAndOfficeService->formatKey($employees));
         } catch (\Exception $e) {
             return ResponseFormat::error('Error retrieving employees: ' . $e->getMessage(), 500);
         }
