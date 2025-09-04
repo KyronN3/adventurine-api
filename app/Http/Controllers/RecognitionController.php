@@ -8,7 +8,7 @@ use App\Components\enum\RecognitionFunction;
 use App\Components\LogMessages;
 use App\Components\ResponseFormat;
 use App\Exceptions\RecognitionServiceException;
-use App\Http\Requests\CreateRecognitionRequest;
+use App\Http\Requests\recognition\ICreateRecognitionRequest;
 use App\Services\RecognitionReadService;
 use App\Services\RecognitionService;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +25,7 @@ class RecognitionController extends Controller
         $this->readService = $readService;
     }
 
-    public function createNewRecognition(CreateRecognitionRequest $request): JsonResponse
+    public function createNewRecognition(ICreateRecognitionRequest $request): JsonResponse
     {
         $data = $request->validated();
 
