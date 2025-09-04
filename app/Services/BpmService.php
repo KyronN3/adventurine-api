@@ -20,7 +20,7 @@ class BpmService
             return Bpm::leftJoin('vwActive', 'ldrBpm.control_no', '=', 'vwActive.ControlNo')
                 ->select(
                     'ldrBpm.*',
-                    'vwActive.Name1 as employee_name',
+                    'vwActive.Name4 as employee_name',
                     'vwActive.Sex',
                     'vwActive.Office',
                     'vwActive.Designation',
