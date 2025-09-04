@@ -3,12 +3,10 @@
 use App\Components\enum\MinioBucket;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BpmController;
-use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\EmployeesAndOfficeController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\RecognitionController;
 use App\Http\Controllers\MinioController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,19 +21,14 @@ Route::get('/welcome', function () {
     ], 200);
 });
 
+Route::get('/test', function () {
+    return \App\Models\User::all();
+});
+Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
 
-Route::prefix('v1')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier');
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [AuthController::class, 'logout']);
-    });
-
-    /*
-        * Below for no Auth Route ❗❗❗
-        * If you want the route to have Auth move the route above. Leave the v1 prefix ❗❗❗
-    */
+    Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     // HR routes ✍️
     Route::prefix('hr')->group(function () {
@@ -50,16 +43,10 @@ Route::prefix('v1')->group(function () {
             Route::put('/approve/{id}', [RecognitionController::class, 'approveRecognition']);
             Route::put('/reject/{id}', [RecognitionController::class, 'rejectRecognition']);
         });
-
-        // BPM routes
-        // ??
     });
 
     // Admin routes ✍️
     Route::prefix('admin')->group(function () {
-        // Event routes
-        // ??
-
         // Recognition routes
         Route::prefix('/recognition')->group(function () {
             Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
@@ -83,7 +70,7 @@ Route::prefix('v1')->group(function () {
     // Event routes
     Route::prefix('/event')->group(function () {
         Route::get('search/all', [EventController::class, 'getEvents']);
-        Route::get('verified', [EventController::class, 'getVerifiedEvents']);
+        Route::get('verified', [EventController::class, 'getVerifiedEvents'])->withoutMiddleware(['auth:sanctum']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
