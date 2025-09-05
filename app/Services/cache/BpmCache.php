@@ -72,7 +72,7 @@ class BpmCache
     {
         // Since we can't easily get all cache keys with a pattern in Laravel,
         // we'll clear them when they're accessed next time by setting a short TTL
-        // For now, we'll rely on the TTL expiration
+        // For now, we'll rely on the TTL expiration i.e. delete based on timer
         Log::info("Office/date caches will expire naturally or be refreshed on next access");
     }
 
