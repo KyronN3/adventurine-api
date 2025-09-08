@@ -27,7 +27,7 @@ class ResponseData
             'hrComment' => $recognition->hr_comment ?? '',
             'dateSubmitted' => $recognition->date_submitted?->format('Y-m-d') ?? null,
             'employeeId' => $recognition->employee_id ?? '',
-            'employeeDepartment' => $recognition->employee_department ?? '',
+            'employeeDepartment' => $recognition->employee_department_clean ?? '',
             'employeeName' => $recognition->employee_name ?? '',
             'recognitionDate' => $recognition->recognition_date?->format('Y-m-d'),
             'recognitionType' => $recognition->recognition_type ?? '',

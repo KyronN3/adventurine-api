@@ -8,6 +8,7 @@ use App\Exceptions\CertificateServiceException;
 use App\Exceptions\MinioException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CertificateService
 {
@@ -52,7 +53,7 @@ class CertificateService
     public function saveCertificate($file, string $fileName, int|string $id): array
     {
         try {
-            $key = $this->minioService->fileNameConvert($fileName, $id);
+            $key = $this->minioService->fileNameConvert($fileName . '.pdf', $id);
             return $this->minioService->saveFile($key, $file, MinioBucket::CERTIFICATE);
 
         } catch (MinioException $e) {
@@ -69,4 +70,28 @@ class CertificateService
                 $e);
         }
     }
+
+    /**
+     * @throws CertificateServiceException
+     * @throws \Exception
+     */
+    public function searchCertificate(array $user, MinioBucket $type): array
+    {
+        try {
+            $filename = $this->minioService->fileNameConvert($user['employeeName'] . ".pdf", $user['id']);
+            log::info($filename);
+            return $this->minioService->generateViewUrl($filename, $type);
+
+        } catch (MinioException $e) {
+            log::info("CATCH BY MINIO EXCEPTION. THROW AS CertificateServiceException" . $e->getMessage());
+
+            throw new CertificateServiceException(
+                $e->getMessage(),
+                $e->getMessage(),
+                (int)$e->getCode(),
+                $e
+            );
+        }
+    }
+
 }

@@ -117,6 +117,57 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::prefix('/employees')->group(function () {
         Route::get('/office/{office}', [EmployeesAndOfficeController::class, 'getEmployeesByOffice']);
     });
+<<<<<<< Updated upstream
+=======
+
+
+    // Certificate
+    Route::prefix('/certificate')->group(function () {
+        Route::get('/recognition/id/{id}', [CertificateController::class, 'generateRecognitionCertificateById']);;
+        Route::post('/recognition/generate', [CertificateController::class, 'generateRecognitionCertificate']);;
+    });
+
+    // Media query
+    Route::prefix('/media')->group(function () {
+        Route::get('/{route}/{type}/{filename}', [MinioController::class, 'fetchFileNameV2'])
+            ->where('filename', '.*'); // <— this allows everything
+
+        Route::get('/stream/{route}/{type}/{filename}', function ($route, $type, $filename) {
+            try {
+                // Pick the correct disk based on route and type
+                $disk = match ($route) {
+                    'recognition' => match ($type) {
+                        'image' => Storage::disk(MinioBucket::RECOGNITION_IMAGE),
+                        'file' => Storage::disk(MinioBucket::RECOGNITION_FILE),
+                        default => throw new \InvalidArgumentException('Invalid type'),
+                    },
+                    'event' => match ($type) {
+                        'image' => Storage::disk(MinioBucket::EVENT_IMAGE),
+                        'file' => Storage::disk(MinioBucket::EVENT_FILE),
+                        default => throw new \InvalidArgumentException('Invalid type'),
+                    },
+                    default => throw new \InvalidArgumentException('Invalid route'),
+                };
+
+                if (!$disk->exists($filename)) {
+                    return response()->json(['message' => 'File not found'], 404);
+                }
+
+                // Stream the file
+                return response()->stream(function () use ($disk, $filename) {
+                    echo $disk->get($filename);
+                }, 200, [
+                    'Content-Type' => $disk->mimeType($filename),
+                    'Content-Disposition' => 'inline; filename="' . $filename . '"',
+                    'Access-Control-Allow-Origin' => '*', // handle CORS
+                ]);
+
+            } catch (\Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 500);
+            }
+        });
+    });
+>>>>>>> Stashed changes
 });
 
 

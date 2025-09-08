@@ -21,7 +21,15 @@ class EmployeesAndOfficeController extends Controller
     public function getEmployeesByOffice(string $office): JsonResponse
     {
         try {
+<<<<<<< Updated upstream
             $key = ['ControlNo', 'Name4', 'Office', 'Sex', 'Designation', 'Status'];
+=======
+            $key = ['ControlNo', 'Name2',
+                // Office column: Exclude "OFFICE OF THE CITY"
+                DB::raw("REPLACE(Office, 'OFFICE OF THE CITY ', '') as Office"),
+                'Sex', 'Designation', 'Status'];
+
+>>>>>>> Stashed changes
             $employees = Cache::remember($office, now()->addDay(), function () use ($office, $key) {
                 return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name4')->paginate(600);
             });
