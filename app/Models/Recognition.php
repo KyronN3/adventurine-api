@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $employee_department
+ */
 class Recognition extends Model
 {
     use HasFactory;
@@ -64,4 +67,8 @@ class Recognition extends Model
         return strtolower($this->getAttribute('status')) === 'rejected';
     }
 
+    public function getEmployeeDepartmentCleanAttribute(): string
+    {
+        return (string) str_replace('OFFICE OF THE CITY ', 'OFFICE ', $this->employee_department ?? '');
+    }
 }

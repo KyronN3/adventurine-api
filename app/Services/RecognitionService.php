@@ -80,7 +80,7 @@ class RecognitionService
                 $recognition);
 
             return [
-                'recognition_id' => $recognition->id,
+                'recognitionId' => $recognition->id,
                 'images' => $imageUrls,
                 'files' => $fileUrls,
             ];

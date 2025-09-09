@@ -4,9 +4,10 @@ namespace App\Services;
 
 use App\Components\enum\MinioBucket;
 use App\Exceptions\MinioException;
+use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Aws\Credentials\Credentials;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 
 class MinioService
@@ -86,47 +87,61 @@ class MinioService
 
     /**
      * @throws MinioException
+     * @throws \Exception
      */
     public function generateViewUrl(string $fileName, MinioBucket $bucket): array
     {
+        $client = $this->getS3Client();
+
         try {
-            $client = $this->getS3Client();
-
-            $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-            $contentType = match ($extension) {
-                'jpg', 'jpeg' => 'image/jpeg',
-                'png' => 'image/png',
-                'gif' => 'image/gif',
-                'pdf' => 'application/pdf',
-                default => 'application/octet-stream',
-            };
-
-            $cmd = $client->getCommand('GetObject', [
+            $client->getObject([
                 'Bucket' => $bucket->value,
                 'Key' => $fileName,
-                'ResponseContentDisposition' => 'inline',
-                'ResponseContentType' => $contentType, // important for browser preview
             ]);
-
-            $expires = new \DateTime($this->expires); // actual expiration datetime
-            $request = $client->createPresignedRequest($cmd, $expires);
-
-            return [
-                'url' => (string)$request->getUri(),
-                'expires' => $expires->format('Y-m-d H:i:s'),];
-        } catch (\Exception $e) {
+        } catch (S3Exception $e) {
             throw new MinioException(
-                'Failed to generate view file url.',
+                "File not found in bucket [{$bucket->value}] with key [{$fileName}]",
                 $e->getMessage(),
                 (int)$e->getCode(),
-                $e);
+                $e
+            );
         }
+
+        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $contentType = match ($extension) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'pdf' => 'application/pdf',
+            default => 'application/octet-stream',
+        };
+
+        $cmd = $client->getCommand('GetObject', [
+            'Bucket' => $bucket->value,
+            'Key' => $fileName,
+            'ResponseContentDisposition' => "inline; filename=\"{$fileName}\"",
+            'ResponseContentType' => $contentType, // important for browser preview
+        ]);
+
+
+        $expiresInMinutes = 60; // 1 hour
+        $expiresAt = time() + ($expiresInMinutes * 60);
+        $request = $client->createPresignedRequest($cmd, $expiresAt);
+
+        log::info((string)$request->getUri());
+
+        return [
+            'url' => (string)$request->getUri(),
+            'expires' => $expiresAt
+        ];
     }
+
 
     /**
      * @throws MinioException
      */
-    public function deleteFile(string $fileName, MinioBucket $bucket): void
+    public
+    function deleteFile(string $fileName, MinioBucket $bucket): void
     {
         try {
             $client = $this->getS3Client();
@@ -147,7 +162,8 @@ class MinioService
     /**
      * @throws MinioException
      */
-    public function deleteFileBatch(array $files, MinioBucket $bucket): void
+    public
+    function deleteFileBatch(array $files, MinioBucket $bucket): void
     {
         try {
             $client = $this->getS3Client();
@@ -171,7 +187,8 @@ class MinioService
     }
 
 
-    public function fileNameConvert(string $fileName, int|string $id): string
+    public
+    function fileNameConvert(string $fileName, int|string $id): string
     {
         $safeFileName = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', pathinfo($fileName, PATHINFO_FILENAME));
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
