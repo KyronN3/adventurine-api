@@ -37,10 +37,11 @@ class RouteRoleVerifier
                     'path' => '/',
                     'component' => 'src/layouts/HR-pageMain.vue',
                     'children' => [
+                        // ['path' => '/', 'component' => '/src/pages/dashboard/HiddenHRDashboard.vue', 'name' => 'dashboard',],
                         ['path' => '/', 'component' => '/src/pages/dashboard/HR-Dashboard.vue', 'name' => 'dashboard',],
-                        ['path' => '/create-event', 'component' => '/src/pages/trainingEvents/CreateEventPage.vue', 'name' => 'createEvent',],
+                        ['path' => '/create-event', 'component' => '/src/pages/trainingEvents/hr/CreateEventPage.vue', 'name' => 'createEvent',],
                         ['path' => '/past-events', 'component' => '/src/pages/trainingEvents/EventsPage.vue', 'name' => 'pastEvents',],
-                        ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/EventDetail.vue', 'name' => 'eventDetail',],
+                        ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/hr/EventDetail.vue', 'name' => 'eventDetail',],
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],
                         ['path' => '/recognition-history', 'component' => '/src/pages/recognition/RecognitionHistoryPage.vue', 'name' => 'recognitionHistory',],

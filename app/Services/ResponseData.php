@@ -9,12 +9,14 @@ class ResponseData
     {
         $imageUrls = array_map(fn($image) => [
             'id' => $image['id'] ?? '',
+            'name' => $image['name'] ?? '',
             'url' => $image['url'] ?? '',
             'expires' => $image['expires'] ?? '',
         ], $images);
 
         $fileUrls = array_map(fn($file) => [
             'id' => $file['id'] ?? '',
+            'name' => $file['name'] ?? '',
             'url' => $file['url'] ?? '',
             'expires' => $file['expires'] ?? '',
         ], $files);
@@ -25,14 +27,14 @@ class ResponseData
             'hrComment' => $recognition->hr_comment ?? '',
             'dateSubmitted' => $recognition->date_submitted?->format('Y-m-d') ?? null,
             'employeeId' => $recognition->employee_id ?? '',
-            'employeeDepartment' => $recognition->employee_department ?? '',
+            'employeeDepartment' => $recognition->employee_department_clean ?? '',
             'employeeName' => $recognition->employee_name ?? '',
             'recognitionDate' => $recognition->recognition_date?->format('Y-m-d'),
             'recognitionType' => $recognition->recognition_type ?? '',
             'achievementDescription' => $recognition->achievement_description ?? '',
 
-            'imageUrls' => $imageUrls,
-            'fileUrls' => $fileUrls,
+            'images' => $imageUrls,
+            'files' => $fileUrls,
         ];
     }
 

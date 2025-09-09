@@ -1,11 +1,15 @@
 <?php
 
+use App\Components\enum\MinioBucket;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BpmController;
 use App\Http\Controllers\EmployeesAndOfficeController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\MinioController;
 use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+
 
 /*
     * Welcome Message
@@ -31,17 +35,48 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // HR event routes ✍️
+    // HR routes ✍️
     Route::prefix('hr')->group(function () {
+        // Event routes
         Route::post('/event/create', [EventController::class, 'createNewEventStore']);
         Route::put('/event/{event}', [EventController::class, 'update']);
         Route::delete('/event/{event}', [EventController::class, 'destroy']);
+
+        // Recognition routes
+        Route::prefix('/recognition')->group(function () {
+            Route::post('/delete/{id}', [RecognitionController::class, 'deletePendingRecognition']);
+            Route::put('/approve/{id}', [RecognitionController::class, 'approveRecognition']);
+            Route::put('/reject/{id}', [RecognitionController::class, 'rejectRecognition']);
+        });
     });
 
-  // Event routes
+    // Admin routes ✍️
+    Route::prefix('admin')->group(function () {
+        // Recognition routes
+        Route::prefix('/recognition')->group(function () {
+            Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
+
+            Route::prefix('/file')->group(function () {
+                Route::get('/fetch/{filename}/{filetype}', [MinioController::class, 'fetchByFileName']);
+                Route::delete('/delete/{filename}/{filetype}', [MinioController::class, 'deleteByFileName']);
+                Route::delete('/delete/batch', [MinioController::class, 'deleteBatch']);
+            });
+        });
+
+        // BPM routes
+        Route::prefix('/bpm')->group(function () {
+            Route::post('/create', [BpmController::class, 'store']);
+            Route::put('/{bpm}', [BpmController::class, 'update']);
+        });
+    });
+
+
+    // Global (Read-only)
+    // Event routes
     Route::prefix('/event')->group(function () {
-        Route::get('search/all', [EventController::class, 'getEvents']);
         Route::get('verified', [EventController::class, 'getVerifiedEvents']);
+        Route::get('unverified', [EventController::class, 'getUnverifiedEvents']);
+        Route::get('past', [EventController::class, 'getPastEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
@@ -49,58 +84,78 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('search', [EventController::class, 'searchEventsName']);
     });
 
+    // Recognition routes
+    Route::prefix('/recognition')->group(function () {
+        Route::get('search/all', [RecognitionController::class, 'getRecognitions']);
+        Route::get('search/history', [RecognitionController::class, 'getRecognitionHistory']);
+        Route::get('search/{id}', [RecognitionController::class, 'getRecognitionById'])
+            ->where('id', '[0-9]+');
+        Route::get('search/department/{department}', [RecognitionController::class, 'getRecognitionsByDepartment'])
+            ->where('department', '[A-Za-z\s\-]+');;
+        Route::get('search/recent', [RecognitionController::class, 'getRecognitionRecent']);
+    });
+
     // BPM routes
-    Route::get('search/all', [EventController::class, 'getEvents']);
-    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
-    Route::get('search/{id}', [EventController::class, 'getEventById']);
-    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
-    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-    Route::get('search/past', [EventController::class, 'PastEvents']);
-    Route::get('search', [EventController::class, 'searchEventsName']);
-    Route::get('{event}', [EventController::class, 'show']);
-});
-    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
-    // that didn't age quite well - velvet underground 🍌
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
-        Route::post('/create', [BpmController::class, 'store']);
-        Route::put('/{bpm}', [BpmController::class, 'update']);
         Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
     });
 
-    // Office Data
-    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice'])->withoutMiddleware(['auth:sanctum']);
+// Office data routes
+    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice']);
 
-    // Employee data routes
+// Employee data routes
     Route::prefix('/employees')->group(function () {
         Route::get('/office/{office}', [EmployeesAndOfficeController::class, 'getEmployeesByOffice']);
     });
 
+    // Certificate
+    Route::prefix('/certificate')->group(function () {
+        Route::get('/recognition/id/{id}', [CertificateController::class, 'generateRecognitionCertificateById']);;
+        Route::post('/recognition/generate', [CertificateController::class, 'generateRecognitionCertificate']);;
+    });
 
+    // Media query
+    Route::prefix('/media')->group(function () {
+        Route::get('/{route}/{type}/{filename}', [MinioController::class, 'fetchFileNameV2'])
+            ->where('filename', '.*'); // <— this allows everything
 
-/*
-    * Below for no Auth Route ❗❗❗.
-    * If you want the route to have Auth move the route above. Leave the v1 prefix ❗❗❗.
-*/
+        Route::get('/stream/{route}/{type}/{filename}', function ($route, $type, $filename) {
+            try {
+                // Pick the correct disk based on route and type
+                $disk = match ($route) {
+                    'recognition' => match ($type) {
+                        'image' => Storage::disk(MinioBucket::RECOGNITION_IMAGE),
+                        'file' => Storage::disk(MinioBucket::RECOGNITION_FILE),
+                        default => throw new \InvalidArgumentException('Invalid type'),
+                    },
+                    'event' => match ($type) {
+                        'image' => Storage::disk(MinioBucket::EVENT_IMAGE),
+                        'file' => Storage::disk(MinioBucket::EVENT_FILE),
+                        default => throw new \InvalidArgumentException('Invalid type'),
+                    },
+                    default => throw new \InvalidArgumentException('Invalid route'),
+                };
 
-Route::prefix('v1')->group(function () {
-    // Future: Strictly role base access here
-    Route::prefix('/admin')->group(function () {
-        Route::prefix('/recognition')->group(function () {
-            Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
-            Route::post('/delete/{id}', [RecognitionController::class, 'deletePendingRecognition']);
-            Route::put('/approve/{id}', [RecognitionController::class, 'approveRecognition']);
-            Route::put('/reject/{id}', [RecognitionController::class, 'rejectRecognition']);;
+                if (!$disk->exists($filename)) {
+                    return response()->json(['message' => 'File not found'], 404);
+                }
+
+                // Stream the file
+                return response()->stream(function () use ($disk, $filename) {
+                    echo $disk->get($filename);
+                }, 200, [
+                    'Content-Type' => $disk->mimeType($filename),
+                    'Content-Disposition' => 'inline; filename="' . $filename . '"',
+                    'Access-Control-Allow-Origin' => '*', // handle CORS
+                ]);
+
+            } catch (\Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 500);
+            }
         });
     });
-    
-    Route::prefix('/recognition')->group(function () {
-        Route::get('search/all', [RecognitionController::class, 'getRecognitions']);
-        Route::get('search/{id}', [RecognitionController::class, 'getRecognitionById']);
-        Route::get('search/department/{department}', [RecognitionController::class, 'getRecognitionsByDepartment']);
-        Route::get('search/recent', [RecognitionController::class, 'getRecognitionRecent']);;
-        Route::get('search/history', [RecognitionController::class, 'getRecognitionHistory']);;
-    });
 });
+
 
 

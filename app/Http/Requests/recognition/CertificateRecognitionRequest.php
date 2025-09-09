@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\recognition;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRecognitionRequest extends FormRequest
+class CertificateRecognitionRequest extends FormRequest implements ICreateRecognitionRequest
 {
     public function authorize(): bool
     {
