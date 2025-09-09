@@ -23,7 +23,7 @@ class EmployeesAndOfficeController extends Controller
         try {
             $key = ['ControlNo', 'Name4', 'Office', 'Sex', 'Designation', 'Status'];
             $employees = Cache::remember($office, now()->addDay(), function () use ($office, $key) {
-                return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name4')->paginate(600);
+                return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name4')->paginate(60);
             });
 
             if ($employees->isEmpty()) {

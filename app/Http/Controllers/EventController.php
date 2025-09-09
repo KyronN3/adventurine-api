@@ -6,7 +6,6 @@ use App\Components\ResponseFormat;
 use App\Exceptions\EventServiceException;
 use App\Http\Requests\CreateEventRequest;
 use App\Http\Requests\UpdateEventRequest;
-use App\Http\Requests\GetVerifiedEventsRequest;
 use App\Models\Event;
 use App\Services\EventService;
 use App\Services\ResponseData;
@@ -23,16 +22,6 @@ class EventController extends Controller
         $this->service = $service;
     }
 
-
-    public function getEvents(): JsonResponse
-    {
-        try {
-            $events = $this->service->getAllEvents();
-            return ResponseFormat::success('Events retrieved successfully', $events);
-        } catch (\Exception $e) {
-            return ResponseFormat::error('Error retrieving events: ' . $e->getMessage(), 500);
-        }
-    }
 
     public function searchEventsName(Request $request): JsonResponse
     {
@@ -89,18 +78,40 @@ class EventController extends Controller
             return ResponseFormat::error('Error updating event: ' . $e->getMessage(), 500);
         }
     }
-public function getVerifiedEvents(GetVerifiedEventsRequest $request): JsonResponse
+
+    public function getVerifiedEvents(): JsonResponse
     {
         try {
             $events = $this->service->getVerifiedEvents();
-           
+
             return ResponseFormat::success('Events retrieved successfully', $events);
         } catch (\Exception $e) {
-            
+
             return ResponseFormat::error('Error retrieving verified events: ' . $e->getMessage(), 500);
         }
     }
-    
+
+    public function getUnverifiedEvents()
+    {
+        try {
+            $events = $this->service->getUnverifiedEvents();
+
+            return ResponseFormat::success('Events retrieved successfully', $events);
+        } catch (\Exception $e) {
+            return ResponseFormat::error('Error retrieving unverified events: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function getPastEvents()
+    {
+        try {
+            $events = $this->service->getPastEvents();
+
+            return ResponseFormat::success('Past events retrieved successfully', $events);
+        } catch (\Exception $e) {
+            return ResponseFormat::error('Error retrieving completed events: ' . $e->getMessage(), 500);
+        }
+    }
 
     public function deleteEventById($id): JsonResponse
     {
@@ -139,7 +150,7 @@ public function getVerifiedEvents(GetVerifiedEventsRequest $request): JsonRespon
     public function getEventById($id): JsonResponse
     {
         try {
-            $event = $this->service->getEventById($id);     
+            $event = $this->service->getEventById($id);
             $data = ResponseData::event($event->array());
             return ResponseFormat::success('Event retrieved successfully', $$data);
         } catch (EventServiceException $e) {
@@ -148,17 +159,6 @@ public function getVerifiedEvents(GetVerifiedEventsRequest $request): JsonRespon
             return ResponseFormat::error('Error retrieving event: ' . $e->getMessage(), 500);
         }
     }
-
-    public function getPastEvents(): JsonResponse
-    {
-        try {
-            $events = $this->service->getPastEvents();
-            return ResponseFormat::success('Past events retrieved successfully', $events);
-        } catch (\Exception $e) {
-            return ResponseFormat::error('Error retrieving past events: ' . $e->getMessage(), 500);
-        }
-    }
-
 
     public function checkDuplicateEvent(Request $request): JsonResponse
     {

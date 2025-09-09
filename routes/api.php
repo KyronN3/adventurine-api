@@ -74,8 +74,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Global (Read-only)
     // Event routes
     Route::prefix('/event')->group(function () {
-        Route::get('search/all', [EventController::class, 'getEvents']);
-        Route::get('verified', [EventController::class, 'getVerifiedEvents'])->withoutMiddleware(['auth:sanctum']);
+        Route::get('verified', [EventController::class, 'getVerifiedEvents']);
+        Route::get('unverified', [EventController::class, 'getUnverifiedEvents']);
+        Route::get('past', [EventController::class, 'getPastEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
@@ -95,23 +96,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
     // BPM routes
-    Route::get('search/all', [EventController::class, 'getEvents']);
-    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
-    Route::get('search/{id}', [EventController::class, 'getEventById']);
-    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
-    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-    Route::get('search/past', [EventController::class, 'PastEvents']);
-    Route::get('search', [EventController::class, 'searchEventsName']);
-
-    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
-// that didn't age quite well - velvet underground. 🍌
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
         Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
     });
 
 // Office data routes
-    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice'])->withoutMiddleware(['auth:sanctum']);
+    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice']);
 
 // Employee data routes
     Route::prefix('/employees')->group(function () {

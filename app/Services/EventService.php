@@ -9,17 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class EventService
 {
-    public function getAllEvents()
-    {
-        try {
-            return Event::with(['outcomes', 'attendance', 'participants'])
-                ->orderBy('event_date', 'desc')
-                ->get();
-        } catch (\Exception $e) {
-            throw new EventServiceException('Failed to retrieve events: ' . $e->getMessage());
-        }
-    }
-
 
     public function getEventById($id)
     {
@@ -37,12 +26,35 @@ class EventService
             $query = Event::with(['outcomes', 'attendance', 'participants'])
                 ->where('event_verify', 'verified');
 
-            $events = $query->orderBy('event_date', 'desc')->get();
-
-            return $events;
+            return $query->orderBy('event_date', 'desc')->get();
         } catch (\Exception $e) {
 
             throw new EventServiceException('Failed to retrieve verified events: ' . $e->getMessage());
+        }
+    }
+
+    public function getUnverifiedEvents()
+    {
+        try {
+            $query = Event::with(['outcomes', 'attendance', 'participants'])
+                ->where('event_verify', 'unverified');
+
+            return $query->orderBy('event_date', 'desc')->get();
+        } catch (\Exception $e) {
+            throw new EventServiceException('Failed to retrieve unverified events: ' . $e->getMessage());
+        }
+    }
+
+    public function getPastEvents()
+    {
+        try {
+            $query = Event::with(['outcomes', 'attendance', 'participants'])
+                ->where('event_status', 'completed');
+
+            return $query->orderBy('event_date', 'desc')->get();
+        } catch (\Exception $e) {
+
+            throw new EventServiceException('Failed to retrieve completed events: ' . $e->getMessage());
         }
     }
 
@@ -168,20 +180,6 @@ class EventService
             throw new EventServiceException('Failed to retrieve upcoming events: ' . $e->getMessage());
         }
     }
-
-
-    public function getPastEvents()
-    {
-        try {
-            return Event::with(['outcomes', 'attendance', 'participants'])
-                ->where('event_date', '<', now()->format('Y-m-d'))
-                ->orderBy('event_date', 'desc')
-                ->get();
-        } catch (\Exception $e) {
-            throw new EventServiceException('Failed to retrieve past events: ' . $e->getMessage());
-        }
-    }
-
 
     public function searchEvents($searchTerm)
     {
