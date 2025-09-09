@@ -49,7 +49,7 @@ class EventService
     {
         try {
             $query = Event::with(['outcomes', 'attendance', 'participants'])
-                ->where('event_status', 'completed');
+                ->where('event_status', 'completed');// not my fault if they named it like that
 
             return $query->orderBy('event_date', 'desc')->get();
         } catch (\Exception $e) {
