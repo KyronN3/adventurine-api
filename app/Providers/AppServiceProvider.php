@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\Requests\recognition\CertificateRecognitionRequest;
+use App\Http\Requests\recognition\ICreateRecognitionRequest;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->bind(ICreateRecognitionRequest::class, CertificateRecognitionRequest::class);
     }
 
     /**

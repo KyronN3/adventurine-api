@@ -11,6 +11,7 @@ use App\Exceptions\BpmServiceException;
 use App\Http\Requests\StoreBPMRequest;
 use App\Models\Bpm;
 use App\Services\BpmService;
+use App\Services\cache\BpmCache;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,10 +19,12 @@ use Illuminate\Support\Facades\DB;
 class BpmController extends Controller
 {
     protected BpmService $service;
+    protected BpmCache $cache;
 
-    public function __construct(BpmService $service)
+    public function __construct(BpmService $service, BpmCache $cache)
     {
         $this->service = $service;
+        $this->cache = $cache;
     }
 
     /**
@@ -88,6 +91,8 @@ class BpmController extends Controller
                 ];
 
                 $bpm->update($validatedData);
+                // Clear cache when record is updated
+                $this->cache->clearAllCaches();
                 return ResponseFormat::success('BPM record updated successfully!', $bpm);
             } else {
                 return ResponseFormat::error('Invalid data provided for update', 400);
@@ -104,6 +109,8 @@ class BpmController extends Controller
     {
         try {
             $bPM->delete();
+            // Clear cache when record is deleted
+            $this->cache->clearAllCaches();
             LogMessages::bpm(BpmFunction::DELETE, LayerLevel::CONTROLLER, LogLevel::INFO);
             return ResponseFormat::success('BPM record deleted successfully!');
         } catch (\Exception $e) {
@@ -123,25 +130,27 @@ class BpmController extends Controller
     public function getBpmByOfficeAndDate(string $office, string $date): JsonResponse
     {
         try {
-            $bpmRecords = DB::table('ldrBpm')
-                ->leftJoin('vwActive', 'ldrBpm.control_no', '=', 'vwActive.ControlNo')
-                ->select([
-                    'ldrBpm.id',
-                    'ldrBpm.control_no',
-                    'ldrBpm.medical_history',
-                    'ldrBpm.bpm_systolic',
-                    'ldrBpm.bpm_diastolic',
-                    'ldrBpm.bpm_dateTaken',
-                    'vwActive.Name4 as employee_name',
-                    'vwActive.Office as Office',
-                    'vwActive.Sex as Sex',
-                    'vwActive.Designation as Designation',
-                    'vwActive.Status as Status'
-                ])
-                ->where('vwActive.Office', $office)
-                ->where('ldrBpm.bpm_dateTaken', $date)
-                ->orderBy('vwActive.Name4')
-                ->get();
+            $bpmRecords = $this->cache->getBpmByOfficeAndDate($office, $date, function () use ($office, $date) {
+                return DB::table('ldrBpm')
+                    ->leftJoin('vwActive', 'ldrBpm.control_no', '=', 'vwActive.ControlNo')
+                    ->select([
+                        'ldrBpm.id',
+                        'ldrBpm.control_no',
+                        'ldrBpm.medical_history',
+                        'ldrBpm.bpm_systolic',
+                        'ldrBpm.bpm_diastolic',
+                        'ldrBpm.bpm_dateTaken',
+                        'vwActive.Name4 as employee_name',
+                        'vwActive.Office as Office',
+                        'vwActive.Sex as Sex',
+                        'vwActive.Designation as Designation',
+                        'vwActive.Status as Status'
+                    ])
+                    ->where('vwActive.Office', $office)
+                    ->where('ldrBpm.bpm_dateTaken', $date)
+                    ->orderBy('vwActive.Name4')
+                    ->get();
+            });
 
             return ResponseFormat::success('BPM records retrieved successfully', $bpmRecords);
         } catch (\Exception $e) {

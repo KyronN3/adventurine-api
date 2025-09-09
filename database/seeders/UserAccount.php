@@ -27,34 +27,43 @@ class UserAccount extends Seeder
             'password' => Hash::make('hr123')
         ]);
 
-        $jabagatHR = User::FirstOrCreate([
+        $jabagatHR = User::firstOrCreate([
             'name' => 'jabagat',
             'email' => 'jabagat@hr.com',
             'office' => 'OFFICE OF THE CITY ACCOUNTANT',
             'password' => Hash::make('hr123')
         ]);
 
-        $jabagatAdmin = User::FirstOrCreate([
+        $jabagatAdmin = User::firstOrCreate([
             'name' => 'jabagat',
             'email' => 'jabagat@admin.com',
             'office' => 'OFFICE OF THE CITY ACCOUNTANT',
             'password' => Hash::make('admin123')
         ]);
 
-        $kyronAdmin = User::FirstOrCreate([
+        $kyronAdmin = User::firstOrCreate([
             'name' => 'kyron',
             'email' => 'kyron@admin.com',
             'office' => 'OFFICE OF THE CITY ACCOUNTANT',
             'password' => Hash::make('admin123')
         ]);
-            
-        $kyronHR = User::FirstOrCreate([
+
+        $kyronHR = User::firstOrCreate([
             'name' => 'kyron',
             'email' => 'kyron@hr.com',
             'office' => 'OFFICE OF THE CITY ACCOUNTANT',
             'password' => Hash::make('hr123')
         ]);
 
+        $engineer = User::firstOrCreate([
+            'name' => 'engineer',
+            'email' => 'engineer@admin.com',
+            'office' => 'OFFICE OF THE CITY ENGINEER',
+            'password' => Hash::make('admin123')
+        ]);
+
+
+        $engineer->assignRole('admin');
         $kyronAdmin->assignRole('admin');
         $kyronHR->assignRole('hr');
         $jabagatAdmin->assignRole('admin');

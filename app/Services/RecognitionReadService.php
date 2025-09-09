@@ -64,6 +64,7 @@ class RecognitionReadService
                     $minio = $this->minioService->generateViewUrl($image->image_name, MinioBucket::RECOGNITION_IMAGE);
                     $images[$re->id][] = [
                         'id' => $image->id,
+                        'name' => $image->image_name,
                         'url' => $minio['url'],
                         'expires' => $minio['expires']
                     ];
@@ -76,6 +77,7 @@ class RecognitionReadService
                     $minio = $this->minioService->generateViewUrl($file->file_name, MinioBucket::RECOGNITION_FILE);
                     $files[$re->id][] = [
                         'id' => $file->id,
+                        'name' => $file->file_name,
                         'url' => $minio['url'],
                         'expires' => $minio['expires']
                     ];
@@ -126,6 +128,10 @@ class RecognitionReadService
      */
     public function getRecognitionByDepartment($department): array
     {
+        if($department == null) {
+            throw new RecognitionServiceException("Department is empty or null.");
+        }
+
         $recognitions = $this->fetchRecognitions(['employee_department' => $department], RecognitionFunction::SEARCH_BY_DEPARTMENT);
         $preloadedUrls = $this->filesToUrl($recognitions);
 

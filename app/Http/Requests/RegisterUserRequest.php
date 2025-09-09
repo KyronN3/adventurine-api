@@ -40,7 +40,7 @@ class RegisterUserRequest extends FormRequest
             'office' => $this->input('office'),
             'role' => $this->input('role'),
             'password' => $this->input('password'),
-            'password_confirmation' => $this->input('passwordConfirmation')
+                'password_confirmation' => $this->input('passwordConfirmation')
         ]);
     }
 }
