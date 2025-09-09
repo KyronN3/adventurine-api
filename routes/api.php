@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BPMController;
+use App\Http\Controllers\BpmController;
 use App\Http\Controllers\EmployeesAndOfficeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\RecognitionController;
@@ -62,10 +62,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
     // that didn't age quite well - velvet underground 🍌
     Route::prefix('/bpm')->group(function () {
-        Route::get('', [BPMController::class, 'getBpm']);
-        Route::post('/create', [BPMController::class, 'store']);
-        Route::put('/{bpm}', [BPMController::class, 'update']);
-        Route::get('/office/{office}/date/{date}', [BPMController::class, 'getBpmByOfficeAndDate']);
+        Route::get('', [BpmController::class, 'getBpm']);
+        Route::post('/create', [BpmController::class, 'store']);
+        Route::put('/{bpm}', [BpmController::class, 'update']);
+        Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
     });
 
     // Office Data
