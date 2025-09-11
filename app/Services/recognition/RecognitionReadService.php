@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\recognition;
 
 use App\Components\enum\LayerLevel;
 use App\Components\enum\LogLevel;
 use App\Components\enum\MinioBucket;
 use App\Components\enum\RecognitionFunction;
+use App\Components\LogMessages;
 use App\Exceptions\RecognitionServiceException;
 use App\Models\Recognition;
-use App\Components\LogMessages;
+use App\Services\MinioService;
+use App\Services\ResponseData;
 use Illuminate\Support\Collection;
 
 

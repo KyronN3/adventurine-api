@@ -46,8 +46,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Recognition routes
         Route::prefix('/recognition')->group(function () {
             Route::post('/delete/{id}', [RecognitionController::class, 'deletePendingRecognition']);
-            Route::put('/approve/{id}', [RecognitionController::class, 'approveRecognition']);
-            Route::put('/reject/{id}', [RecognitionController::class, 'rejectRecognition']);
+            Route::put('/approved/{id}', [RecognitionController::class, 'approveRecognition']);
+            Route::put('/rejected/{id}', [RecognitionController::class, 'rejectRecognition']);
         });
     });
 
@@ -58,7 +58,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
 
             Route::prefix('/file')->group(function () {
-                Route::get('/fetch/{filename}/{filetype}', [MinioController::class, 'fetchByFileName']);
                 Route::delete('/delete/{filename}/{filetype}', [MinioController::class, 'deleteByFileName']);
                 Route::delete('/delete/batch', [MinioController::class, 'deleteBatch']);
             });
@@ -75,12 +74,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Global (Read-only)
     // Event routes
     Route::prefix('/event')->group(function () {
-        Route::get('verified', [EventController::class, 'getVerifiedEvents']);
-        Route::get('unverified', [EventController::class, 'getUnverifiedEvents']);
-        Route::get('past', [EventController::class, 'getPastEvents']);
+        Route::get('search/all', [EventController::class, 'getEvents']);
+        Route::get('verified', [EventController::class, 'getVerifiedEvents'])->withoutMiddleware(['auth:sanctum']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
+        Route::get('search/past', [EventController::class, 'PastEvents']);
         Route::get('search', [EventController::class, 'searchEventsName']);
     });
 
@@ -93,21 +92,34 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('search/department/{department}', [RecognitionController::class, 'getRecognitionsByDepartment'])
             ->where('department', '[A-Za-z\s\-]+');;
         Route::get('search/recent', [RecognitionController::class, 'getRecognitionRecent']);
+        Route::get('search/media/{id}', [RecognitionController::class, 'getRecognitionMediaById'])
+            ->where('id', '[0-9]+');;
     });
 
     // BPM routes
+    Route::get('search/all', [EventController::class, 'getEvents']);
+    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
+    Route::get('search/{id}', [EventController::class, 'getEventById']);
+    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
+    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
+    Route::get('search/past', [EventController::class, 'PastEvents']);
+    Route::get('search', [EventController::class, 'searchEventsName']);
+
+    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
+// that didn't age quite well - velvet underground. 🍌
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
         Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
     });
 
 // Office data routes
-    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice']);
+    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice'])->withoutMiddleware(['auth:sanctum']);
 
 // Employee data routes
     Route::prefix('/employees')->group(function () {
         Route::get('/office/{office}', [EmployeesAndOfficeController::class, 'getEmployeesByOffice']);
     });
+
 
     // Certificate
     Route::prefix('/certificate')->group(function () {
@@ -117,8 +129,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Media query
     Route::prefix('/media')->group(function () {
-        Route::get('/{route}/{type}/{filename}', [MinioController::class, 'fetchFileNameV2'])
+//        Route::get('/{route}/{type}/{filename}', [MinioController::class, 'fetchFileNameV2'])
+//            ->where('filename', '.*'); // <— this allows everything
+
+        Route::get('/view/{filetype}/{filename}', [MinioController::class, 'fetchByFileName'])
             ->where('filename', '.*'); // <— this allows everything
+
 
         Route::get('/stream/{route}/{type}/{filename}', function ($route, $type, $filename) {
             try {
@@ -156,6 +172,3 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
     });
 });
-
-
-

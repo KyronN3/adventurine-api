@@ -26,7 +26,7 @@ class MinioController extends Controller
     /**
      * @throws \Exception
      */
-    public function fetchByFileName($fileName, $type): JsonResponse
+    public function fetchByFileName($type, $fileName): JsonResponse
     {
         try {
             $fileType = $this->getFileType($type);

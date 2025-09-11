@@ -28,6 +28,7 @@ return new class extends Migration {
         Schema::create('ldrRecognition_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('recognition_id')->constrained('ldrRecognitions')->onDelete('cascade');
+            $table->string('original_name');
             $table->string('image_name');
             $table->timestamps();
         });
@@ -35,6 +36,7 @@ return new class extends Migration {
         Schema::create('ldrRecognition_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('recognition_id')->constrained('ldrRecognitions')->onDelete('cascade');
+            $table->string('original_name');
             $table->string('file_name');
             $table->timestamps();
         });

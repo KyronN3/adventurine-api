@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\recognition;
 
 use App\Components\enum\LayerLevel;
 use App\Components\enum\LogLevel;
@@ -9,6 +9,7 @@ use App\Components\enum\RecognitionFunction;
 use App\Components\LogMessages;
 use App\Exceptions\RecognitionServiceException;
 use App\Models\Recognition;
+use App\Services\MinioService;
 use Illuminate\Support\Facades\DB;
 
 class RecognitionService
@@ -45,7 +46,7 @@ class RecognitionService
             if (!empty($data['images'])) {
                 foreach ($data['images'] as $imageName) {
                     $key = $this->minioService->fileNameConvert($imageName, $recognition->id);
-                    $recognition->images()->create(['image_name' => $key]);
+                    $recognition->images()->create(['original_name' => $imageName, 'image_name' => $key]);
                     $imageKeys[] = $key;
                 }
             }
@@ -53,7 +54,7 @@ class RecognitionService
             if (!empty($data['files'])) {
                 foreach ($data['files'] as $fileName) {
                     $key = $this->minioService->fileNameConvert($fileName, $recognition->id);
-                    $recognition->files()->create(['file_name' => $key]);
+                    $recognition->files()->create(['original_name' => $fileName, 'file_name' => $key]);
                     $fileKeys[] = $key;
                 }
             }
@@ -193,7 +194,7 @@ class RecognitionService
     // Check recognition if currently pending
     // Console logs after action
     // Update to approve, return error otherwise not
-    public function rejectPendingRecognition($id): void
+    public function rejectPendingRecognition($id, $hrComment = ''): void
     {
         $recognition = Recognition::find($id);
 
@@ -204,6 +205,7 @@ class RecognitionService
             throw new RecognitionServiceException("Recognition is already {$recognition->status} and cannot be rejected.");
 
         try {
+            $recognition->hr_comment = $hrComment;
             $recognition->toRejected();
             $recognition->save();
 
