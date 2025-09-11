@@ -69,6 +69,6 @@ class Recognition extends Model
 
     public function getEmployeeDepartmentCleanAttribute(): string
     {
-        return (string) str_replace('OFFICE OF THE CITY ', 'OFFICE ', $this->employee_department ?? '');
+        return (string) str_replace('OFFICE OF THE CITY ', '', $this->employee_department ?? '');
     }
 }

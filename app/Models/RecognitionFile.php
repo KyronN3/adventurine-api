@@ -13,6 +13,7 @@ class RecognitionFile extends Model
     protected $fillable = [
         'id',
         'recognition_id',
+        'original_name',
         'file_name',
     ];
 

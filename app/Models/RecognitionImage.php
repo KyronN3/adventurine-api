@@ -13,6 +13,7 @@ class RecognitionImage extends Model
     protected $fillable = [
         'id',
         'event_id',
+        'original_name',
         'image_name',
     ];
 

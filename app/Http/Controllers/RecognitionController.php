@@ -9,17 +9,19 @@ use App\Components\LogMessages;
 use App\Components\ResponseFormat;
 use App\Exceptions\RecognitionServiceException;
 use App\Http\Requests\recognition\ICreateRecognitionRequest;
-use App\Services\RecognitionReadService;
-use App\Services\RecognitionService;
+use App\Services\recognition\IRecognitionReadService;
+use App\Services\recognition\RecognitionReadService;
+use App\Services\recognition\RecognitionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 
 class RecognitionController extends Controller
 {
     protected RecognitionService $service;
-    protected RecognitionReadService $readService;
+    protected IRecognitionReadService $readService;
 
-    public function __construct(RecognitionService $service, RecognitionReadService $readService)
+    public function __construct(RecognitionService $service, IRecognitionReadService $readService)
     {
         $this->service = $service;
         $this->readService = $readService;
@@ -72,10 +74,12 @@ class RecognitionController extends Controller
         }
     }
 
-    public function rejectRecognition($id): JsonResponse
+    public function rejectRecognition($id, Request $request): JsonResponse
     {
         try {
-            $this->service->rejectPendingRecognition($id);
+            $hrComment = $request->input('hrComment', '');
+
+            $this->service->rejectPendingRecognition($id, $hrComment);
             return ResponseFormat::success('Recognition rejected successfully');
 
             // Catch exceptions. Return error response
@@ -147,6 +151,21 @@ class RecognitionController extends Controller
         } catch (\Exception $e) {
             LogMessages::recognition(RecognitionFunction::SEARCH_HISTORY, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
             return ResponseFormat::error('Error fetching recognition history.');
+        }
+    }
+
+
+    public function getRecognitionMediaById($id): JsonResponse
+    {
+        try {
+            $response = $this->readService->getRecognitionMediaById($id);
+            return ResponseFormat::success("Recognition media fetched successfully", $response);
+
+        } catch (RecognitionServiceException $e) {
+            return ResponseFormat::error($e->getMessage());
+        } catch (\Exception $e) {
+            LogMessages::recognition(RecognitionFunction::SEARCH_MEDIA, LayerLevel::CONTROLLER, LogLevel::ERROR, $e);
+            return ResponseFormat::error('Error fetching recognition media.');
         }
     }
 
