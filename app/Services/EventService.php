@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Exceptions\EventServiceException;
 use App\Models\Event;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EventService
@@ -26,7 +25,7 @@ class EventService
             $query = Event::with(['outcomes', 'attendance', 'participants'])
                 ->where('event_verify', 'verified');
 
-            return $query->orderBy('event_date', 'desc')->get();
+            return $query->orderBy('event_schedule', 'desc')->get();
         } catch (\Exception $e) {
 
             throw new EventServiceException('Failed to retrieve verified events: ' . $e->getMessage());
@@ -39,7 +38,7 @@ class EventService
             $query = Event::with(['outcomes', 'attendance', 'participants'])
                 ->where('event_verify', 'unverified');
 
-            return $query->orderBy('event_date', 'desc')->get();
+            return $query->orderBy('event_schedule', 'desc')->get();
         } catch (\Exception $e) {
             throw new EventServiceException('Failed to retrieve unverified events: ' . $e->getMessage());
         }
@@ -51,7 +50,7 @@ class EventService
             $query = Event::with(['outcomes', 'attendance', 'participants'])
                 ->where('event_status', 'completed');// not my fault if they named it like that
 
-            return $query->orderBy('event_date', 'desc')->get();
+            return $query->orderBy('event_schedule', 'desc')->get();
         } catch (\Exception $e) {
 
             throw new EventServiceException('Failed to retrieve completed events: ' . $e->getMessage());
@@ -85,7 +84,7 @@ class EventService
             DB::beginTransaction();
 
             $existingEvent = Event::where('event_name', $data['event_name'])
-                ->where('event_date', $data['event_date'])
+                ->where('event_schedule', $data['event_schedule'])
                 ->where('event_location', $data['event_location'])
                 ->first();
 
@@ -97,7 +96,7 @@ class EventService
             }
 
             $sameNameDateEvent = Event::where('event_name', $data['event_name'])
-                ->where('event_date', $data['event_date'])
+                ->where('event_schedule', $data['event_schedule'])
                 ->first();
 
             if ($sameNameDateEvent) {
@@ -107,7 +106,6 @@ class EventService
                     , '', 409);
             }
 
-            $data['event_date'] = Carbon::parse($data['event_date'])->format('Y-m-d');
             $data['event_status'] = $data['event_status'] ?? 'active';
 
             $event = Event::create($data);

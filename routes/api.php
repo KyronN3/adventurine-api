@@ -3,10 +3,10 @@
 use App\Components\enum\MinioBucket;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BpmController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\EmployeesAndOfficeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\MinioController;
-use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -81,7 +81,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-        Route::get('search/past', [EventController::class, 'PastEvents']);
         Route::get('search', [EventController::class, 'searchEventsName']);
     });
 

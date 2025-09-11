@@ -21,7 +21,7 @@ class EmployeesAndOfficeController extends Controller
     public function getEmployeesByOffice(string $office): JsonResponse
     {
         try {
-            $key = ['ControlNo', 'Name2',
+            $key = ['ControlNo', 'Name4',
                 // Office column: Exclude "OFFICE OF THE CITY"
                 DB::raw("REPLACE(Office, 'OFFICE OF THE CITY ', '') as Office"),
                 'Sex', 'Designation', 'Status'];

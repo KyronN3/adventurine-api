@@ -14,11 +14,9 @@ class Event extends Model
     protected $fillable = [
         'event_name',
         'event_types',
-        'event_duration',
+        'event_schedule',
         'event_description',
         'event_departments',
-        'event_date',
-        'event_end_date',
         'event_location',
         'event_model',
         'event_forms',
@@ -30,8 +28,7 @@ class Event extends Model
         'event_types' => 'array',
         'event_departments' => 'array',
         'event_forms' => 'array',
-        'event_date' => 'date:Y-m-d ',
-        'event_end_date' => 'date:Y-m-d ',
+        'event_schedule' => 'array',
     ];
 
     public function outcomes()
