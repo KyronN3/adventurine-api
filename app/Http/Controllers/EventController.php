@@ -102,7 +102,7 @@ class EventController extends Controller
         }
     }
 
-   
+
     public function deleteEventById($id): JsonResponse
     {
         try {
@@ -137,7 +137,7 @@ class EventController extends Controller
         }
     }
 
-  public function getEventById($id): JsonResponse
+    public function getEventById($id): JsonResponse
     {
         try {
             $event = $this->service->getEventById($id);

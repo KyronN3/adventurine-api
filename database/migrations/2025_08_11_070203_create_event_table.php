@@ -17,9 +17,7 @@ return new class extends Migration {
             $table->string('event_types');
             $table->text('event_description');
             $table->json('event_departments');
-            $table->string('event_duration');
-            $table->date('event_date');
-            $table->date('event_end_date')->nullable();
+            $table->json('event_schedule');
             $table->string('event_location');
             $table->string('event_model');
             $table->json('event_forms')->nullable();
