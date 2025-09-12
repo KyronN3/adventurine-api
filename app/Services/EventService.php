@@ -77,12 +77,15 @@ class EventService
         }
     }
 
+    public function setParticipantEvent()
+    {
+
+    }
 
     public function createNewEvent($data)
     {
         try {
             DB::beginTransaction();
-
             $existingEvent = Event::where('event_name', $data['event_name'])
                 ->where('event_schedule', $data['event_schedule'])
                 ->where('event_location', $data['event_location'])

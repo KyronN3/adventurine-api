@@ -74,12 +74,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Global (Read-only)
     // Event routes
     Route::prefix('/event')->group(function () {
-        Route::get('search/all', [EventController::class, 'getEvents']);
-        Route::get('verified', [EventController::class, 'getVerifiedEvents'])->withoutMiddleware(['auth:sanctum']);
+        Route::get('verified', [EventController::class, 'getVerifiedEvents']);
+        Route::get('unverified', [EventController::class, 'getUnverifiedEvents']);
+        Route::get('past', [EventController::class, 'getPastEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
         Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-        Route::get('search/past', [EventController::class, 'PastEvents']);
         Route::get('search', [EventController::class, 'searchEventsName']);
     });
 
@@ -95,15 +95,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('search/media/{id}', [RecognitionController::class, 'getRecognitionMediaById'])
             ->where('id', '[0-9]+');;
     });
-
-    // BPM routes
-    Route::get('search/all', [EventController::class, 'getEvents']);
-    Route::get('verified', [EventController::class, 'getVerifiedEvents']);
-    Route::get('search/{id}', [EventController::class, 'getEventById']);
-    Route::get('search/status', [EventController::class, 'getEventsByStatus']);
-    Route::get('search/upcoming', [EventController::class, 'getUpcomingEvents']);
-    Route::get('search/past', [EventController::class, 'PastEvents']);
-    Route::get('search', [EventController::class, 'searchEventsName']);
 
     // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
 // that didn't age quite well - velvet underground. 🍌
