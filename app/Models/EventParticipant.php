@@ -13,8 +13,7 @@ class EventParticipant extends Model
 
     protected $fillable = [
         'event_id',
-        'participant_id',
-        'name',
+        'employee_control_no',
     ];
 
     public function event()

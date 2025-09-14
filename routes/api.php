@@ -11,37 +11,29 @@ use App\Http\Controllers\RecognitionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-
-/*
-    * Welcome Message
-*/
-
 Route::get('/welcome', function () {
     return response()->json([
         'message' => 'Welcome to City API! ❤️❤️❤️',
     ], 200);
 });
 
-/*
-    * Getting Office Data 🙂
-*/
-
-
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
-    /*
-    * Authentication 🔐
-    */
 
-    Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
-    Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    // Authentication routes 🔐
+    Route::prefix('/auth')->group(function () {
+//        Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']); //Uncomment this if you want to use register
+        Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
 
     // HR routes ✍️
     Route::prefix('hr')->group(function () {
         // Event routes
-        Route::post('/event/create', [EventController::class, 'createNewEventStore']);
-        Route::put('/event/{event}', [EventController::class, 'update']);
-        Route::delete('/event/{event}', [EventController::class, 'destroy']);
+        Route::prefix('/event')->group(function () {
+            Route::post('/create', [EventController::class, 'createNewEventStore']);
+            Route::put('/update/{update}', [EventController::class, 'update']);
+            Route::delete('/delete/{delete}', [EventController::class, 'destroy']);
+        });
 
         // Recognition routes
         Route::prefix('/recognition')->group(function () {
@@ -52,7 +44,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
     // Admin routes ✍️
-    Route::prefix('admin')->group(function () {
+    Route::prefix('/admin')->group(function () {
+        //Nominate Participant routes
+        Route::prefix('/event')->group(function () {
+            Route::post('/nominate', [EventController::class, 'nominateEventParticipant']);
+        });
+
         // Recognition routes
         Route::prefix('/recognition')->group(function () {
             Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
@@ -71,7 +68,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
 
-    // Global (Read-only)
+    /* Global (Read-only) GET ❗🚫❗*/
+
     // Event routes
     Route::prefix('/event')->group(function () {
         Route::get('verified', [EventController::class, 'getVerifiedEvents']);
@@ -96,21 +94,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             ->where('id', '[0-9]+');;
     });
 
-    // just read and creating. cuz frontend will handle the filtering - velvet underground 🍌
-// that didn't age quite well - velvet underground. 🍌
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
         Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
     });
 
-// Office data routes
-    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice'])->withoutMiddleware(['auth:sanctum']);
+    // Office data routes
+    Route::get('/office', [EmployeesAndOfficeController::class, 'getOffice']);
 
-// Employee data routes
+    // Employee data routes
     Route::prefix('/employees')->group(function () {
         Route::get('/office/{office}', [EmployeesAndOfficeController::class, 'getEmployeesByOffice']);
     });
-
 
     // Certificate
     Route::prefix('/certificate')->group(function () {

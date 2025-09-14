@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateEventRequest extends FormRequest
@@ -56,5 +57,10 @@ class CreateEventRequest extends FormRequest
         return [
 
         ];
+    }
+
+    protected function failedAuthorization()
+    {
+        throw new AuthorizationException('You are not authorized to perform this action only HR.');
     }
 }

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Components\ResponseFormat;
 use App\Exceptions\EventServiceException;
 use App\Http\Requests\CreateEventRequest;
+use App\Http\Requests\NominateParticipantRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use App\Services\EventService;
+use App\Services\NominateParticipantService;
 use App\Services\ResponseData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,12 +18,13 @@ use Illuminate\Support\Facades\Auth;
 class EventController extends Controller
 {
     protected EventService $service;
+    protected NominateParticipantService $nominateParticipantService;
 
-    public function __construct(EventService $service)
+    public function __construct(EventService $service, NominateParticipantService $nominateParticipantService)
     {
         $this->service = $service;
+        $this->nominateParticipantService = $nominateParticipantService;
     }
-
 
     public function searchEventsName(Request $request): JsonResponse
     {
@@ -39,7 +42,6 @@ class EventController extends Controller
         }
     }
 
-
     public function createNewEventStore(CreateEventRequest $request): JsonResponse
     {
         try {
@@ -55,16 +57,25 @@ class EventController extends Controller
 //            ));
 
             return ResponseFormat::creationSuccess('New event created successfully!',
-                Auth::user()->hasRole('hr'),
+                Auth::user()->hasRole('hr') ? 'hr' : 'admin',
                 now(), $response, 201);
 
-        } catch (EventServiceException $e) {
-            return ResponseFormat::error($e->getMessage(), 400);
         } catch (\Exception $e) {
             return ResponseFormat::error('Error creating new event: ' . $e->getMessage(), 500);
         }
     }
 
+    public function nominateEventParticipant(NominateParticipantRequest $request): JsonResponse
+    {
+        try {
+            $validatedData = $request->validated();
+            $response = $this->nominateParticipantService->nominateParticipant($validatedData);
+
+            return ResponseFormat::creationSuccess('Nominated Participants successfully!', Auth::user()->hasRole('hr') ? 'hr' : 'admin', now(), $response, 201);
+        } catch (\Exception $e) {
+            return ResponseFormat::error('Error nominating participants: ' . $e->getMessage(), 500);
+        }
+    }
 
     public function update(UpdateEventRequest $request, Event $event): JsonResponse
     {
@@ -102,7 +113,6 @@ class EventController extends Controller
         }
     }
 
-
     public function deleteEventById($id): JsonResponse
     {
         try {
@@ -114,7 +124,6 @@ class EventController extends Controller
             return ResponseFormat::error('Error deleting event: ' . $e->getMessage(), 500);
         }
     }
-
 
     public function getEventsByStatus(Request $request): JsonResponse
     {
@@ -160,39 +169,4 @@ class EventController extends Controller
         }
     }
 
-
-    public function checkDuplicateEvent(Request $request): JsonResponse
-    {
-        try {
-            $request->validate([
-                'event_name' => 'required|string|max:255',
-                'event_date' => 'required|date_format:Y-m-d',
-                'event_venue' => 'nullable|string|max:255',
-            ]);
-
-            $eventName = $request->input('event_name');
-            $eventDate = $request->input('event_date');
-            $eventVenue = $request->input('event_venue');
-
-            $result = $this->service->checkEventExists($eventName, $eventDate, $eventVenue);
-
-            if ($result['exists']) {
-                return ResponseFormat::error($result['message'], 409, [
-                    'existing_event' => $result['event'],
-                    'duplicate_check' => true
-                ]);
-            }
-
-            return ResponseFormat::success('No duplicate event found. You can proceed with creating this event.', [
-                'duplicate_check' => false
-            ]);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return ResponseFormat::error('Validation failed: ' . $e->getMessage(), 422);
-        } catch (EventServiceException $e) {
-            return ResponseFormat::error($e->getMessage(), 400);
-        } catch (\Exception $e) {
-            return ResponseFormat::error('Error checking for duplicate events: ' . $e->getMessage(), 500);
-        }
-    }
 }

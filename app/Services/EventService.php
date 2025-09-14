@@ -22,38 +22,32 @@ class EventService
     public function getVerifiedEvents()
     {
         try {
-            $query = Event::with(['outcomes', 'attendance', 'participants'])
-                ->where('event_verify', 'verified');
-
-            return $query->orderBy('event_schedule', 'desc')->get();
+            return event::with(['outcomes', 'attendance', 'participants'])
+                ->where('event_verify', 'verified')->orderBy('event_schedule', 'desc')->get();
         } catch (\Exception $e) {
 
-            throw new EventServiceException('Failed to retrieve verified events: ' . $e->getMessage());
+            throw new EventServiceException('Failed to retrieve verified events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }
 
     public function getUnverifiedEvents()
     {
         try {
-            $query = Event::with(['outcomes', 'attendance', 'participants'])
-                ->where('event_verify', 'unverified');
-
-            return $query->orderBy('event_schedule', 'desc')->get();
+            return Event::with(['outcomes', 'attendance', 'participants'])
+                ->where('event_verify', 'unverified')->orderBy('event_schedule', 'desc')->get();
         } catch (\Exception $e) {
-            throw new EventServiceException('Failed to retrieve unverified events: ' . $e->getMessage());
+            throw new EventServiceException('Failed to retrieve unverified events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }
 
     public function getPastEvents()
     {
         try {
-            $query = Event::with(['outcomes', 'attendance', 'participants'])
-                ->where('event_status', 'completed');// not my fault if they named it like that
-
-            return $query->orderBy('event_schedule', 'desc')->get();
+            return Event::with(['outcomes', 'attendance', 'participants'])
+                ->where('event_status', 'completed')->orderBy('event_schedule', 'desc')->get();
         } catch (\Exception $e) {
 
-            throw new EventServiceException('Failed to retrieve completed events: ' . $e->getMessage());
+            throw new EventServiceException('Failed to retrieve completed events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }
 
@@ -73,13 +67,8 @@ class EventService
             return $events;
         } catch (\Exception $e) {
 
-            throw new EventServiceException('Failed to retrieve events by status: ' . $e->getMessage());
+            throw new EventServiceException('Failed to retrieve events by status: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
-    }
-
-    public function setParticipantEvent()
-    {
-
     }
 
     public function createNewEvent($data)
@@ -115,10 +104,10 @@ class EventService
 
             DB::commit();
 
-            return $event->load(['outcomes', 'attendance', 'participants']);
+            return $event;
         } catch (\Exception $e) {
             DB::rollBack();
-            throw new EventServiceException('Failed to create event: ' . $e->getMessage(), $e->getCode());
+            throw new EventServiceException('Failed to create event: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }
 

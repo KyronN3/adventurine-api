@@ -59,8 +59,10 @@ class AuthController extends Controller
         }
         $user = Auth::user();
 
-        // delete all tokens in the authenticated user | only single login account per device ❤️❤️❤️
-        $user->tokens()->delete();
+        // delete all tokens in the authenticated user | only Three (3) login account per device ❤️❤️❤️
+        if ($user->tokens()->count() === 3) {
+            $user->tokens()->delete();
+        }
 
         $token = $user->createToken(
             Str::lower($credentials['email']) . '_auth_token', ['*'],

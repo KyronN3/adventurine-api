@@ -49,8 +49,7 @@ return new class extends Migration {
         Schema::create('ldrEvent_participants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('event_id')->constrained('ldrEvents')->onDelete('cascade');
-            $table->unsignedBigInteger('employee_controlNo');
-            $table->string('name')->nullable();
+            $table->string('employee_control_no');
             $table->timestamps();
         });
     }
