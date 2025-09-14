@@ -25,7 +25,7 @@ class CreateEventRequest extends FormRequest
             'event_schedule.*.timeEnd' => 'bail|required|date_format:H:i:s',
             'event_location' => 'bail|required|string|max:255',
             'event_model' => 'bail|required|string|max:100|in:in-house,external',
-            'event_types' => 'bail|required|string|max:50|in:seminar,training,workshop,orientation,conference,webinar,team_building, assessment',
+            'event_types' => 'bail|required|string|max:50|in:seminar,training,workshop,orientation,conference,webinar,team_building,assessment',
             'event_departments' => 'bail|required|array',
             'event_departments.*' => 'bail|string|max:100',
             'event_forms' => 'bail|required|array',

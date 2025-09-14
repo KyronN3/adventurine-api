@@ -30,8 +30,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::prefix('hr')->group(function () {
         // Event routes
         Route::prefix('/event')->group(function () {
-            Route::post('/create', [EventController::class, 'createNewEventStore']);
-            Route::put('/update/{update}', [EventController::class, 'update']);
+            Route::post('/create', [EventController::class, 'createNewEvent']);
             Route::delete('/delete/{delete}', [EventController::class, 'destroy']);
         });
 
@@ -48,6 +47,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         //Nominate Participant routes
         Route::prefix('/event')->group(function () {
             Route::post('/nominate', [EventController::class, 'nominateEventParticipant']);
+            Route::match(['put', 'patch'], '/update/{update}', [EventController::class, 'updateEvent']);
         });
 
         // Recognition routes

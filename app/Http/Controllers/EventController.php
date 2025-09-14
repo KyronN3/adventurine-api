@@ -42,7 +42,7 @@ class EventController extends Controller
         }
     }
 
-    public function createNewEventStore(CreateEventRequest $request): JsonResponse
+    public function createNewEvent(CreateEventRequest $request): JsonResponse
     {
         try {
             $validatedData = $request->validated();
@@ -77,7 +77,7 @@ class EventController extends Controller
         }
     }
 
-    public function update(UpdateEventRequest $request, Event $event): JsonResponse
+    public function updateEvent(UpdateEventRequest $request, Event $event): JsonResponse
     {
         try {
             $validatedData = $request->validated();
@@ -110,6 +110,16 @@ class EventController extends Controller
             return ResponseFormat::success('Events retrieved successfully', $events);
         } catch (\Exception $e) {
             return ResponseFormat::error('Error retrieving unverified events: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function getPastEvents(): JsonResponse
+    {
+        try {
+            $events = $this->service->getPastEvents();
+            return ResponseFormat::success('Past events retrieved successfully', $events);
+        } catch (\Exception $e) {
+            return ResponseFormat::error('Error retrieving past events: ' . $e->getMessage(), 500);
         }
     }
 
@@ -159,14 +169,5 @@ class EventController extends Controller
         }
     }
 
-    public function getPastEvents(): JsonResponse
-    {
-        try {
-            $events = $this->service->getPastEvents();
-            return ResponseFormat::success('Past events retrieved successfully', $events);
-        } catch (\Exception $e) {
-            return ResponseFormat::error('Error retrieving past events: ' . $e->getMessage(), 500);
-        }
-    }
 
 }
