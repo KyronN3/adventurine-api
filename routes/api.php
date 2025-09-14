@@ -31,7 +31,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Event routes
         Route::prefix('/event')->group(function () {
             Route::post('/create', [EventController::class, 'createNewEvent']);
-            Route::delete('/delete/{delete}', [EventController::class, 'destroy']);
+            Route::delete('/delete/{id}', [EventController::class, 'destroy']);
         });
 
         // Recognition routes
@@ -47,7 +47,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         //Nominate Participant routes
         Route::prefix('/event')->group(function () {
             Route::post('/nominate', [EventController::class, 'nominateEventParticipant']);
-            Route::match(['put', 'patch'], '/update/{update}', [EventController::class, 'updateEvent']);
+            Route::match(['put', 'patch'], '/update/{id}', [EventController::class, 'updateEvent']);
         });
 
         // Recognition routes
@@ -94,6 +94,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             ->where('id', '[0-9]+');;
     });
 
+    // Bpm Routes
     Route::prefix('/bpm')->group(function () {
         Route::get('', [BpmController::class, 'getBpm']);
         Route::get('/office/{office}/date/{date}', [BpmController::class, 'getBpmByOfficeAndDate']);
