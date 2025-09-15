@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\BpmServiceException;
 use App\Models\Bpm;
+use App\Models\Relations\CustomORM;
 use App\Services\cache\BpmCache;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -28,16 +29,16 @@ class BpmService
             \Illuminate\Support\Facades\Log::info('BpmService: Starting getAllBpms');
             $result = $this->cache->getAllBpms(function () {
                 \Illuminate\Support\Facades\Log::info('BpmService: Executing BPM query');
-                $query = Bpm::leftJoin('vwActive', 'ldrBpm.control_no', '=', 'vwActive.ControlNo')
-                    ->select(
-                        'ldrBpm.*',
-                        'vwActive.Name4 as employee_name',
-                        'vwActive.Sex',
-                        'vwActive.Office',
-                        'vwActive.Designation',
-                        'vwActive.Status'
-                    )
-                    ->distinct();
+
+                $orm = new CustomORM(new Bpm, 'vwActive');
+                $query = $orm->leftJoinCustomColumn(['ldrBpm.*',
+                    'vwActive.Name4 as employee_name',
+                    'vwActive.Sex',
+                    'vwActive.Office',
+                    'vwActive.Designation',
+                    'vwActive.Status'],
+                    'control_no',
+                    'ControlNo')->distinct();
                 \Illuminate\Support\Facades\Log::info('BpmService: Query built, executing get()');
                 $records = $query->get();
                 \Illuminate\Support\Facades\Log::info('BpmService: Query executed, records count: ' . $records->count());

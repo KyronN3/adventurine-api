@@ -4,11 +4,11 @@ namespace App\Exceptions;
 
 use Exception;
 
-class EventServiceException extends Exception
+class NominateParticipantException extends Exception
 {
     public string $internalMessage;
 
-    public function __construct(string     $userMessage = "User Message: Problems in Event Service Layer",
+    public function __construct(string     $userMessage = "User Message: Problems in Nominate Participant Service Layer",
                                 string     $internalMessage = "",
                                 int        $code = 500,
                                 ?Exception $previous = null)

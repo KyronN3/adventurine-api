@@ -50,7 +50,7 @@ class BpmController extends Controller
         try {
             $validatedData = $request->validated();
 
-            // checker just in case if non batch was requested
+            // checker just in case if non-batch was requested
             if (isset($validatedData['bpm_entries'])) {
                 // batch
                 $response = $this->service->createMultipleBpms($validatedData['bpm_entries']);
