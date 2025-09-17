@@ -37,7 +37,6 @@ class RouteRoleVerifier
                     'path' => '/',
                     'component' => 'src/layouts/HR-pageMain.vue',
                     'children' => [
-                        // ['path' => '/', 'component' => '/src/pages/dashboard/HiddenHRDashboard.vue', 'name' => 'dashboard',],
                         ['path' => '/', 'component' => '/src/pages/dashboard/HR-Dashboard.vue', 'name' => 'dashboard',],
                         ['path' => '/create-event', 'component' => '/src/pages/trainingEvents/hr/CreateEventPage.vue', 'name' => 'createEvent',],
                         ['path' => '/past-events', 'component' => '/src/pages/trainingEvents/EventsPage.vue', 'name' => 'pastEvents',],
