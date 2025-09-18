@@ -52,7 +52,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
         // Recognition routes
         Route::prefix('/recognition')->group(function () {
-            Route::post('/create', [RecognitionController::class, 'createNewRecognition']);
+            Route::post('/create', [RecognitionController::class, 'createRecognition']);
 
             Route::prefix('/file')->group(function () {
                 Route::delete('/delete/{filename}/{filetype}', [MinioController::class, 'deleteByFileName']);

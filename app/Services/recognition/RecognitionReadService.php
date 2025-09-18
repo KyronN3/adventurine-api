@@ -8,9 +8,9 @@ use App\Components\enum\MinioBucket;
 use App\Components\enum\RecognitionFunction;
 use App\Components\LogMessages;
 use App\Exceptions\RecognitionServiceException;
-use App\Models\Recognition;
+use App\Models\recognition\Recognition;
+use App\Services\mapper\ResponseData;
 use App\Services\MinioService;
-use App\Services\ResponseData;
 use Illuminate\Support\Collection;
 
 

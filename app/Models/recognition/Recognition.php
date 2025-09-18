@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\recognition;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,12 +24,26 @@ class Recognition extends Model
         'recognition_date',
         'recognition_type',
         'achievement_description',
+        'title'
     ];
 
     protected $casts = [
         'date_submitted' => 'date',
         'recognition_date' => 'date'
     ];
+
+    // Recognition Types  ========================== //
+    public function milestone()
+    {
+        return $this->hasOne(RecognitionMilestone::class, 'recognition_id', 'id');
+    }
+
+    public function academic()
+    {
+        return $this->hasOne(RecognitionAcademic::class, 'recognition_id', 'id');
+    }
+
+    // ============================================= //
 
     public function files()
     {
@@ -40,7 +54,6 @@ class Recognition extends Model
     {
         return $this->hasMany(RecognitionImage::class, 'recognition_id', 'id');
     }
-
 
     public function toApproved(): static
     {
@@ -69,6 +82,6 @@ class Recognition extends Model
 
     public function getEmployeeDepartmentCleanAttribute(): string
     {
-        return (string) str_replace('OFFICE OF THE CITY ', '', $this->employee_department ?? '');
+        return (string)str_replace('OFFICE OF THE CITY ', '', $this->employee_department ?? '');
     }
 }

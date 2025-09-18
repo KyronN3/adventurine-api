@@ -9,7 +9,7 @@ use App\Exceptions\CertificateServiceException;
 use App\Exceptions\RecognitionServiceException;
 use App\Http\Requests\CertificateRecognitionRequest;
 use App\Services\cache\CertificateCache;
-use App\Services\CertificateService;
+use App\Services\certificate\CertificateService;
 use App\Services\recognition\RecognitionReadService;
 use Illuminate\Support\Facades\Log;
 

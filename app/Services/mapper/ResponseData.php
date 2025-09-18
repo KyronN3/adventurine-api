@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Services;
-
-use Illuminate\Support\Facades\Log;
+namespace App\Services\mapper;
 
 class ResponseData
 {
@@ -30,9 +28,10 @@ class ResponseData
             'employeeId' => $recognition->employee_id ?? '',
             'employeeDepartment' => $recognition->employee_department_clean ?? '',
             'employeeName' => $recognition->employee_name ?? '',
-            'recognitionDate' => $recognition->recognition_date?->format('Y-m-d'),
+            'recognitionDate' => $recognition->recognition_date?->format('Y-m-d') ?? null,
             'recognitionType' => $recognition->recognition_type ?? '',
             'achievementDescription' => $recognition->achievement_description ?? '',
+            'title' => $recognition->title ?? '',
 
             'images' => $imageNames,
             'files' => $fileNames,
@@ -67,6 +66,7 @@ class ResponseData
             'recognitionDate' => $recognition->recognition_date?->format('Y-m-d'),
             'recognitionType' => $recognition->recognition_type ?? '',
             'achievementDescription' => $recognition->achievement_description ?? '',
+            'title' => $recognition->title ?? '',
 
             'images' => $imageUrls,
             'files' => $fileUrls,
