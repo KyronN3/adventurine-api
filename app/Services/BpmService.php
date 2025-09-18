@@ -5,16 +5,13 @@ namespace App\Services;
 use App\Exceptions\BpmServiceException;
 use App\Models\Bpm;
 use App\Models\Relations\CustomORM;
-use App\Services\cache\BpmCache;
 use Illuminate\Database\Eloquent\Collection;
 
 class BpmService
 {
-    protected BpmCache $cache;
 
-    public function __construct(BpmCache $cache)
+    public function __construct()
     {
-        $this->cache = $cache;
     }
 
     /**
@@ -27,25 +24,22 @@ class BpmService
     {
         try {
             \Illuminate\Support\Facades\Log::info('BpmService: Starting getAllBpms');
-            $result = $this->cache->getAllBpms(function () {
-                \Illuminate\Support\Facades\Log::info('BpmService: Executing BPM query');
+            \Illuminate\Support\Facades\Log::info('BpmService: Executing BPM query');
 
-                $orm = new CustomORM(new Bpm, 'vwActive');
-                $query = $orm->leftJoinCustomColumn(['ldrBpm.*',
-                    'vwActive.Name4 as employee_name',
-                    'vwActive.Sex',
-                    'vwActive.Office',
-                    'vwActive.Designation',
-                    'vwActive.Status'],
-                    'control_no',
-                    'ControlNo')->distinct();
-                \Illuminate\Support\Facades\Log::info('BpmService: Query built, executing get()');
-                $records = $query->get();
-                \Illuminate\Support\Facades\Log::info('BpmService: Query executed, records count: ' . $records->count());
-                return $records;
-            });
+            $orm = new CustomORM(new Bpm, 'vwActive');
+            $query = $orm->leftJoinCustomColumn(['ldrBpm.*',
+                'vwActive.Name4 as employee_name',
+                'vwActive.Sex',
+                'vwActive.Office',
+                'vwActive.Designation',
+                'vwActive.Status'],
+                'control_no',
+                'ControlNo')->distinct();
+            \Illuminate\Support\Facades\Log::info('BpmService: Query built, executing get()');
+            $records = $query->get();
+            \Illuminate\Support\Facades\Log::info('BpmService: Query executed, records count: ' . $records->count());
             \Illuminate\Support\Facades\Log::info('BpmService: getAllBpms completed successfully');
-            return $result;
+            return $records;
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('BpmService: Exception in getAllBpms: ' . $e->getMessage());
             throw new BpmServiceException(
@@ -66,8 +60,6 @@ class BpmService
     {
         try {
             $bpm = Bpm::create($data);
-            // Clear cache when new record is added
-            $this->cache->clearAllCaches();
             return $bpm;
         } catch (\Exception $e) {
             throw new BpmServiceException(
@@ -91,8 +83,6 @@ class BpmService
             foreach ($data as $bpmData) {
                 $createdRecords[] = Bpm::create($bpmData);
             }
-            // Clear cache when new records are added
-            $this->cache->clearAllCaches();
             return $createdRecords;
         } catch (\Exception $e) {
             throw new BpmServiceException(
