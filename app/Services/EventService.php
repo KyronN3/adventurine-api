@@ -51,6 +51,27 @@ class EventService
         }
     }
 
+    public function getAllEvents()
+    {
+        try {
+            $event = Event::all(['id', 'event_schedule', 'event_location', 'event_description', 'event_name']);
+            return array_map(function ($event) {
+                return [
+                    'id' => $event['id'],
+                    'title' => $event['event_name'],
+                    'location' => $event['event_location'],
+                    'description' => $event['event_description'],
+                    'schedule' => $event['event_schedule'],
+                ];
+
+            }, $event->toArray());
+
+        } catch (\Exception $e) {
+
+            throw new EventServiceException('Failed to retrieve all events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
+        }
+    }
+
     public function getEventsByStatus($status)
     {
         try {
@@ -111,24 +132,22 @@ class EventService
         }
     }
 
-
-    public function updateEvent($id, $data)
+    public function updateEvent($data, $id)
     {
         try {
-            DB::beginTransaction();
+            $event = Event::find($id);
+            DB::transaction(function () use ($data, $event) {
+                if (!isset($event)) {
+                    throw new EventServiceException('Event does not exist.');
+                }
+                $event->update($data);
+            });
 
-            $event = Event::findOrFail($id);
-            $event->update($data);
-
-            DB::commit();
-
-            return $event->load(['outcomes', 'attendance', 'participants']);
+            return $event->load('participants');
         } catch (\Exception $e) {
-            DB::rollBack();
-            throw new EventServiceException('Failed to update event: ' . $e->getMessage());
+            throw new EventServiceException('Failed to update event: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }
-
 
     public function deleteEvent($id)
     {
@@ -156,7 +175,6 @@ class EventService
             throw new EventServiceException('Failed to delete event: ' . $e->getMessage());
         }
     }
-
 
     public function getUpcomingEvents()
     {
@@ -186,7 +204,6 @@ class EventService
             throw new EventServiceException('Failed to search events: ' . $e->getMessage());
         }
     }
-
 
     public function checkEventExists($eventName, $eventDate, $eventVenue = null)
     {

@@ -27,6 +27,7 @@ class EmployeesAndOfficeController extends Controller
                 'Sex', 'Designation', 'Status'];
 
             $employees = Cache::remember($office, now()->addDay(), function () use ($office, $key) {
+                // add for is training 
                 return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name4')->paginate(60);
             });
 

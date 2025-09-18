@@ -7,7 +7,6 @@ use App\Exceptions\EventServiceException;
 use App\Http\Requests\CreateEventRequest;
 use App\Http\Requests\NominateParticipantRequest;
 use App\Http\Requests\UpdateEventRequest;
-use App\Models\Event;
 use App\Services\EventService;
 use App\Services\NominateParticipantService;
 use App\Services\ResponseData;
@@ -77,11 +76,12 @@ class EventController extends Controller
         }
     }
 
-    public function updateEvent(UpdateEventRequest $request, Event $event): JsonResponse
+    public function updateEvent(UpdateEventRequest $request, $id): JsonResponse
     {
         try {
             $validatedData = $request->validated();
-            $response = $this->service->updateEvent($event->id, $validatedData);
+            $response = $this->service->updateEvent($validatedData, $id);
+
             return ResponseFormat::success('Event updated successfully!', $response);
         } catch (EventServiceException $e) {
             return ResponseFormat::error($e->getMessage(), 400);
@@ -120,6 +120,16 @@ class EventController extends Controller
             return ResponseFormat::success('Past events retrieved successfully', $events);
         } catch (\Exception $e) {
             return ResponseFormat::error('Error retrieving past events: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function getAllEvents(): JsonResponse
+    {
+        try {
+            $events = $this->service->getAllEvents();
+            return ResponseFormat::success('All events retrieved successfully', $events);
+        } catch (\Exception $e) {
+            return ResponseFormat::error($e->getMessage(), 500);
         }
     }
 

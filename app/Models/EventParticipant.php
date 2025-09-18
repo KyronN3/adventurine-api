@@ -14,6 +14,9 @@ class EventParticipant extends Model
     protected $fillable = [
         'event_id',
         'employee_control_no',
+        'employee_name',
+        'event_name',
+        'is_training'
     ];
 
     public function event()

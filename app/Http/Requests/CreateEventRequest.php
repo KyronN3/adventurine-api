@@ -51,14 +51,6 @@ class CreateEventRequest extends FormRequest
         ]);
     }
 
-    public function messages(): array
-    {
-        // You can Create a Customize error message here ✍️😋
-        return [
-
-        ];
-    }
-
     protected function failedAuthorization()
     {
         throw new AuthorizationException('You are not authorized to perform this action only HR.');

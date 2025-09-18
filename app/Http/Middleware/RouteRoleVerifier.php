@@ -44,7 +44,7 @@ class RouteRoleVerifier
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],
                         ['path' => '/recognition-history', 'component' => '/src/pages/recognition/RecognitionHistoryPage.vue', 'name' => 'recognitionHistory',],
-                        ['path' => '/profile', 'component' => '/src/pages/client/HRProfilePage.vue', 'name' => 'profile',],
+                        ['path' => '/create-account', 'component' => '/src/pages/client/HRCreateAccountPage.vue', 'name' => 'createAccount',],
                         ['path' => '/attendance', 'component' => '/src/components/AttendancePage.vue', 'name' => 'attendance',],
                     ],
                     'name' => 'hr'

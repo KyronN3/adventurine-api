@@ -50,6 +50,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('event_id')->constrained('ldrEvents')->onDelete('cascade');
             $table->string('employee_control_no');
+            $table->string('is_training');
+            $table->string('employee_name');
+            $table->string('event_name');
             $table->timestamps();
         });
     }

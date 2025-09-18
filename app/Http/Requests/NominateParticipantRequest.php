@@ -26,10 +26,14 @@ class NominateParticipantRequest extends FormRequest
         return [
             'nominated' => 'bail|required|array',
             'nominated.*.event_id' => 'bail|required|integer|exists:ldrEvents,id',
+            'nominated.*.is_training' => 'bail|required|boolean',
+            'nominated.*.event_name' => 'bail|required|string|exists:ldrEvents,event_name',
             'nominated.*.employee_control_no' => 'bail|required|digits:6|exists:vwActive,ControlNo|unique:ldrEvent_participants,employee_control_no',
+            'nominated.*.employee_name' => 'bail|required|string',
             'nominated.*.created_at' => 'required|date:Y-m-d H:i:s',
             'nominated.*.updated_at' => 'required|date:Y-m-d H:i:s',
         ];
+
     }
 
     /**
@@ -38,17 +42,23 @@ class NominateParticipantRequest extends FormRequest
 
     protected function prepareForValidation()
     {
+
         $transform = [];
         foreach ($this->input('nominated') as $participant => $key) {
             $transform[] = [
-                'employee_control_no' => $key['controlNo'],
-                'event_id' => $key['eventId'],
+                'employee_control_no' => $key['controlNo'] ?? '',
+                'employee_name' => $key['employeeName'] ?? '',
+                'event_name' => $key['eventName'] ?? '',
+                'is_training' => $key['isTraining'] ?? '',
+                'event_id' => $key['eventId'] ?? '',
                 'created_at' => now()->format('Y-m-d H:i:s'),
                 'updated_at' => now()->format('Y-m-d H:i:s')
             ];
+
         }
         $unique = [];
         /* Check for duplicates 👌🤖*/
+
         foreach ($transform as $item) {
             $check = $item['employee_control_no'];
             if (!isset($unique[$check])) {

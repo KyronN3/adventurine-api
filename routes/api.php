@@ -74,6 +74,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::prefix('/event')->group(function () {
         Route::get('verified', [EventController::class, 'getVerifiedEvents']);
         Route::get('unverified', [EventController::class, 'getUnverifiedEvents']);
+        Route::get('all', [EventController::class, 'getAllEvents']);
         Route::get('past', [EventController::class, 'getPastEvents']);
         Route::get('search/{id}', [EventController::class, 'getEventById']);
         Route::get('search/status', [EventController::class, 'getEventsByStatus']);
