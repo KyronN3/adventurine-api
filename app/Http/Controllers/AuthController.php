@@ -12,23 +12,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    /*
-     * Register Users ❤️❤️❤️
-    */
 
+    //  Register Users ❤️❤️❤️
     public function register(RegisterUserRequest $request): JsonResponse
     {
-
         try {
             $user = DB::transaction(function () use ($request) {
-                // If anything fail in here just automatically rollback in short data will be not created ❤️❤️❤️
+                // If anything fail in here just automatically rollback in short data will not be created ❤️❤️❤️
                 $user = User::create([
-                    'name' => $request->validated()['name'],
-                    'email' => $request->validated()['email'],
+                    'email_control_no' => $request->validated()['email_control_no'],
+                    'control_no' => $request->validated()['control_no'],
                     'office' => $request->validated()['office'],
                     'password' => Hash::make($request->validated()['password']),
                 ]);
@@ -37,15 +35,18 @@ class AuthController extends Controller
                 return $user;
             });
 
-            return ResponseFormat::creationSuccess('Created Successfully', $request->validated()['role'], $user->created_at, $user->only(['name', 'email']), 201);
+            return ResponseFormat::creationSuccess('Created Successfully', $request->validated()['role'], $user->created_at, $user->only(['office', 'email_control_no']), 201);
         } catch (\Exception $e) {
             return ResponseFormat::error($e->getMessage(), $e->getCode() < 700 ? $e->getCode() : 500);
         }
     }
 
+    // Login User 👌🤖
     public function login(Request $request): JsonResponse
     {
-        $credentials = $request->validate(['email' => 'required|email', 'password' => 'required']);
+        $formatKey = ['email_control_no' => $request->input('email'), 'password' => $request->input('password')];
+        $validator = Validator::make($formatKey, ['email_control_no' => 'required|email', 'password' => 'required']);
+        $credentials = $validator->validated();
 
         if (!Auth::attempt($credentials)) {
             return response()->json([
@@ -65,7 +66,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken(
-            Str::lower($credentials['email']) . '_auth_token', ['*'],
+            Str::lower($credentials['email_control_no']) . '_auth_token', ['*'],
             now()->addDays(7)
         )->plainTextToken;
 
@@ -75,10 +76,11 @@ class AuthController extends Controller
             'token' => $token,
             'httpStatus' => 'OK',
             'message' => 'Login successfull, Welcome!',
-            'data' => $user->only('name', 'email'),
+            'data' => $user->only('email_control_no'),
         ]);
     }
 
+    // Logout User 👌🔐
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();

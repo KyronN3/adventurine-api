@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeesAndOfficeController extends Controller
 {
-
     protected EmployeeAndOfficeService $employeeAndOfficeService;
 
     public function __construct(EmployeeAndOfficeService $employeeAndOfficeService)
@@ -27,7 +26,7 @@ class EmployeesAndOfficeController extends Controller
                 'Sex', 'Designation', 'Status'];
 
             $employees = Cache::remember($office, now()->addDay(), function () use ($office, $key) {
-                // add for is training 
+                // add for is training
                 return DB::table('vwActive')->select($key)->where('Office', $office)->orderBy('Name4')->paginate(60);
             });
 
@@ -45,7 +44,7 @@ class EmployeesAndOfficeController extends Controller
     {
         try {
             $office = Cache::remember('office', now()->addDays(7), function () {
-                return DB::table('vwofficearrangement')->pluck('Office');
+                return DB::table('vwofficearrangement')->pluck(DB::raw("REPLACE(Office, 'OFFICE OF THE CITY ', '') as Office"));
             });
 
             if ($office->isEmpty()) {

@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class EventService
 {
-
     public function getEventById($id)
     {
         try {
             return Event::with(['outcomes', 'attendance', 'participants'])
                 ->find($id);
+
         } catch (\Exception $e) {
             throw new EventServiceException('Failed to retrieve event: ' . $e->getMessage());
         }
@@ -25,7 +25,6 @@ class EventService
             return event::with(['outcomes', 'attendance', 'participants'])
                 ->where('event_verify', 'verified')->orderBy('event_schedule', 'desc')->get();
         } catch (\Exception $e) {
-
             throw new EventServiceException('Failed to retrieve verified events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }
@@ -55,7 +54,7 @@ class EventService
     {
         try {
             $event = Event::all(['id', 'event_schedule', 'event_location', 'event_description', 'event_name']);
-            return array_map(function ($event) {
+            return array_map(static function ($event) {
                 return [
                     'id' => $event['id'],
                     'title' => $event['event_name'],
@@ -63,11 +62,9 @@ class EventService
                     'description' => $event['event_description'],
                     'schedule' => $event['event_schedule'],
                 ];
-
             }, $event->toArray());
 
         } catch (\Exception $e) {
-
             throw new EventServiceException('Failed to retrieve all events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }

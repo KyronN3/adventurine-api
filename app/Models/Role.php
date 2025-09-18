@@ -9,6 +9,7 @@ class Role extends Model
 
     protected $table = 'ldrRole';
     protected $fillable = ['name', 'updated_at', 'created_at'];
+    protected $hidden = ['pivot'];
 
     protected function casts(): array
     {

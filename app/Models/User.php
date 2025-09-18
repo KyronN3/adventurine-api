@@ -16,10 +16,10 @@ class User extends Authenticatable
 
     protected $table = 'ldrUser';
     protected $fillable = [
-        'name',
-        'email',
+        'email_control_no',
         'password',
-        'office'
+        'office',
+        'control_no',
     ];
 
     protected $hidden = [

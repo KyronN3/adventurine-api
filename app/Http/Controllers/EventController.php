@@ -9,7 +9,6 @@ use App\Http\Requests\NominateParticipantRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Services\EventService;
 use App\Services\NominateParticipantService;
-use App\Services\ResponseData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -97,7 +96,6 @@ class EventController extends Controller
 
             return ResponseFormat::success('Events retrieved successfully', $events);
         } catch (\Exception $e) {
-
             return ResponseFormat::error('Error retrieving verified events: ' . $e->getMessage(), 500);
         }
     }
@@ -170,8 +168,7 @@ class EventController extends Controller
     {
         try {
             $event = $this->service->getEventById($id);
-            $data = ResponseData::event($event->array());
-            return ResponseFormat::success('Event retrieved successfully', $$data);
+            return ResponseFormat::success('Event retrieved successfully', $event);
         } catch (EventServiceException $e) {
             return ResponseFormat::error($e->getMessage(), 404);
         } catch (\Exception $e) {

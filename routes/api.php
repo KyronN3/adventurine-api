@@ -1,6 +1,7 @@
 <?php
 
 use App\Components\enum\MinioBucket;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BpmController;
 use App\Http\Controllers\CertificateController;
@@ -21,7 +22,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Authentication routes 🔐
     Route::prefix('/auth')->group(function () {
-//        Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']); //Uncomment this if you want to use register
+        Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
         Route::post('/login', [AuthController::class, 'login'])->middleware('route-role-verifier')->withoutMiddleware(['auth:sanctum']);
         Route::post('/logout', [AuthController::class, 'logout']);
     });
@@ -32,6 +33,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::prefix('/event')->group(function () {
             Route::post('/create', [EventController::class, 'createNewEvent']);
             Route::delete('/delete/{id}', [EventController::class, 'destroy']);
+        });
+
+        // Account routes
+        Route::prefix('/account')->group(function () {
+            Route::post('/delete', [AccountController::class, 'deleteAccount']);
         });
 
         // Recognition routes
@@ -67,8 +73,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
     });
 
-
     /* Global (Read-only) GET ❗🚫❗*/
+
+    // Account routes
+    Route::prefix('/account')->group(function () {
+        Route::get('/get-account', [AccountController::class, 'getAccount']);
+    });
 
     // Event routes
     Route::prefix('/event')->group(function () {
