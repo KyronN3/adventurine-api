@@ -14,10 +14,12 @@ class EmployeeAndOfficeService
                 'controlno' => $employee->ControlNo,
                 'name' => $employee->Name4,
                 'office' => $employee->Office,
+                'officeShort' => str_replace('OFFICE OF THE CITY ', '', $employee->Office),
                 'sex' => $employee->Sex,
                 'designation' => $employee->Designation,
                 'status' => $employee->Status,
             ];
+
             array_push($data, $format);
         }
         return $data;

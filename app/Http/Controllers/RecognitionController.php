@@ -8,12 +8,16 @@ use App\Components\enum\RecognitionFunction;
 use App\Components\LogMessages;
 use App\Components\ResponseFormat;
 use App\Exceptions\RecognitionServiceException;
-use App\Http\Requests\recognition\ICreateRecognitionRequest;
+use App\Http\Requests\recognition\AcademicRecognitionRequest;
+use App\Http\Requests\recognition\CertificateRecognitionRequest;
+use App\Http\Requests\recognition\MilestoneRecognitionRequest;
+use App\Http\Requests\RecognitionRequest;
 use App\Services\recognition\IRecognitionReadService;
-use App\Services\recognition\RecognitionReadService;
 use App\Services\recognition\RecognitionService;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 
 class RecognitionController extends Controller
@@ -27,11 +31,13 @@ class RecognitionController extends Controller
         $this->readService = $readService;
     }
 
-    public function createNewRecognition(ICreateRecognitionRequest $request): JsonResponse
+    public function createRecognition(RecognitionRequest $request): JsonResponse
     {
         $data = $request->validated();
 
         try {
+            Log::info('data before log: ', $data);
+
             $response = $this->service->createNewRecognition($data);
             return ResponseFormat::success('New recognition created successfully!', $response);
 
@@ -43,6 +49,8 @@ class RecognitionController extends Controller
             return ResponseFormat::error('Error creating new recognition.');
         }
     }
+
+    // ==================================================================== //
 
     public function deletePendingRecognition($id): JsonResponse
     {

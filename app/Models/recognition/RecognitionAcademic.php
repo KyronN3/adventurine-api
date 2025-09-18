@@ -1,20 +1,25 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\recognition;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RecognitionFile extends Model
+class RecognitionAcademic extends Model
 {
     use HasFactory;
 
-    protected $table = 'ldrRecognition_files';
+    protected $table = 'ldrRecognition_academic';
+
     protected $fillable = [
-        'id',
         'recognition_id',
-        'original_name',
-        'file_name',
+        'degree',
+        'institution',
+        'completion_date',
+    ];
+
+    protected $casts = [
+        'completion_date' => 'date'
     ];
 
     public function recognition()

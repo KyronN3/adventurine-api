@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Controllers\RecognitionController;
+use App\Http\Requests\recognition\AcademicRecognitionRequest;
 use App\Http\Requests\recognition\CertificateRecognitionRequest;
 use App\Http\Requests\recognition\ICreateRecognitionRequest;
 use App\Services\recognition\IRecognitionReadService;
@@ -16,9 +17,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
-        $this->app->bind(ICreateRecognitionRequest::class, CertificateRecognitionRequest::class);
-
         $this->app->when(RecognitionController::class)
             ->needs(IRecognitionReadService::class)
             ->give(RecognitionReadServiceV2::class);    }

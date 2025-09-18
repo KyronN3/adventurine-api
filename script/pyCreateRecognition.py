@@ -8,7 +8,7 @@ import time
 # CONFIG
 # =======================
 API_URL = "http://localhost:8000/api/v1/admin/recognition/create"
-BEARER_TOKEN = "200292|GXfXJ5cBhMh2dFQfodX3V5QiAlxlNqxDphGTzio4a9da3aac"
+BEARER_TOKEN = "1|o5paQ5GatIRSqI2GU9SErmYpoUMqAa2AsJNxXQhhac6dad6d"
 
 # All dummy recognitions will use these same files/images
 IMAGE_PATHS = [
@@ -139,6 +139,7 @@ for idx, char in enumerate(characters, start=1):
         "recognitionDate": f"2025-08-{15 + (idx % 15):02d}",
         "recognitionType": char["type"],
         "achievementDescription": char["achievement"],
+        "title" : "Hotdog",
         "images": [Path(p).name for p in IMAGE_PATHS],
         "files": [Path(p).name for p in FILE_PATHS]
     }

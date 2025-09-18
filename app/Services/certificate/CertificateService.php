@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\certificate;
 
 use App\Components\enum\CertificateType;
 use App\Components\enum\MinioBucket;
 use App\Exceptions\CertificateServiceException;
 use App\Exceptions\MinioException;
+use App\Services\MinioService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;

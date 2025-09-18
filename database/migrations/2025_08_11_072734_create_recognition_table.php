@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('employee_department');
             $table->string('employee_name');
             $table->date('recognition_date');
-            $table->string('recognition_type');
+            $table->string('title');
             $table->text('achievement_description');
             $table->timestamps();
         });

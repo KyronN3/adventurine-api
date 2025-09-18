@@ -20,10 +20,15 @@ class EmployeesAndOfficeController extends Controller
     public function getEmployeesByOffice(string $office): JsonResponse
     {
         try {
-            $key = ['ControlNo', 'Name4',
-                // Office column: Exclude "OFFICE OF THE CITY"
-                DB::raw("REPLACE(Office, 'OFFICE OF THE CITY ', '') as Office"),
-                'Sex', 'Designation', 'Status'];
+            $key = [
+                'ControlNo',
+                'Name4',
+                'Office', // Full office name
+                DB::raw("REPLACE(Office, 'OFFICE OF THE CITY ', '') as OfficeShort"), // Cleaned office
+                'Sex',
+                'Designation',
+                'Status'
+            ];
 
             $employees = Cache::remember($office, now()->addDay(), function () use ($office, $key) {
                 // add for is training

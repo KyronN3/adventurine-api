@@ -37,6 +37,7 @@ class RouteRoleVerifier
                     'path' => '/',
                     'component' => 'src/layouts/HR-pageMain.vue',
                     'children' => [
+                        // ['path' => '/', 'component' => '/src/pages/dashboard/HiddenHRDashboard.vue', 'name' => 'dashboard',],
                         ['path' => '/', 'component' => '/src/pages/dashboard/HR-Dashboard.vue', 'name' => 'dashboard',],
                         ['path' => '/create-event', 'component' => '/src/pages/trainingEvents/hr/CreateEventPage.vue', 'name' => 'createEvent',],
                         ['path' => '/events-page', 'component' => '/src/pages/trainingEvents/EventsPage.vue', 'name' => 'eventsPage',],
@@ -44,7 +45,9 @@ class RouteRoleVerifier
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],
                         ['path' => '/recognition-history', 'component' => '/src/pages/recognition/RecognitionHistoryPage.vue', 'name' => 'recognitionHistory',],
-                        ['path' => '/create-account', 'component' => '/src/pages/client/HRCreateAccountPage.vue', 'name' => 'createAccount',],
+                        // === Route for certificate generator === //
+                        ['path' => '/recognition-history/certificate', 'component' => '/src/pages/recognition/RecognitionCertificate.vue', 'name' => 'recognitionCertificate',],
+                        ['path' => '/profile', 'component' => '/src/pages/client/HRProfilePage.vue', 'name' => 'profile',],
                         ['path' => '/attendance', 'component' => '/src/components/AttendancePage.vue', 'name' => 'attendance',],
                     ],
                     'name' => 'hr'
@@ -74,6 +77,8 @@ class RouteRoleVerifier
                         ['path' => '/finished-events', 'component' => '/src/pages/trainingEvents/admin/FinishedEventsPage.vue', 'name' => 'finishedEvents',],
                         ['path' => '/create-recognition', 'component' => '/src/pages/recognition/admin/AdminCreateRecognition.vue', 'name' => 'createRecognition',],
                         ['path' => '/admin-recognition-history', 'component' => '/src/pages/recognition/admin/AdminRecognitionHistory.vue', 'name' => 'adminRecognitionHistory',],
+                        // === Route for certificate generator === //
+                        ['path' => '/admin-recognition-history/certificate', 'component' => '/src/pages/recognition/RecognitionCertificate.vue', 'name' => 'recognitionCertificate',],
                         ['path' => '/profile', 'component' => '/src/pages/client/AdminProfilePage.vue', 'name' => 'profile',],
                         ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/admin/EventDetail.vue', 'name' => 'adminEventDetail',],
                     ],

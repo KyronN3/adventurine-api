@@ -2,8 +2,6 @@
 
 namespace App\Services\cache;
 
-use App\Models\Recognition;
-
 class MediaCache
 {
 

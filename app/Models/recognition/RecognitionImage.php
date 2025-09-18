@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\recognition;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +17,7 @@ class RecognitionImage extends Model
         'image_name',
     ];
 
-    public function event()
+    public function recognition()
     {
         return $this->belongsTo(Recognition::class, 'recognition_id', 'id');
     }

@@ -8,6 +8,7 @@ use App\Http\Requests\CreateEventRequest;
 use App\Http\Requests\NominateParticipantRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Services\EventService;
+use App\Services\mapper\ResponseData;
 use App\Services\NominateParticipantService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
