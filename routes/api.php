@@ -122,6 +122,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Certificate
     Route::prefix('/certificate')->group(function () {
         Route::get('/recognition/id/{id}', [CertificateController::class, 'generateRecognitionCertificateById']);;
+        Route::post('/recognition/data', [CertificateController::class, 'generateRecognitionCertificateWithData']);;
         Route::post('/recognition/generate', [CertificateController::class, 'generateRecognitionCertificate']);;
     });
 

@@ -32,6 +32,7 @@ class MinioService
     {
         try {
             $client = $this->getS3Client();
+            $contentType = "application/octet-stream";
             $cmd = $client->getCommand('PutObject', [
                 'Bucket' => $bucket->value,
                 'Key' => $fileName,

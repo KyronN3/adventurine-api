@@ -7,24 +7,29 @@ use App\Components\enum\MinioBucket;
 use App\Components\ResponseFormat;
 use App\Exceptions\CertificateServiceException;
 use App\Exceptions\RecognitionServiceException;
+use App\Http\Requests\CertificateMetadataRequest;
 use App\Http\Requests\CertificateRecognitionRequest;
 use App\Services\cache\CertificateCache;
 use App\Services\certificate\CertificateService;
+use App\Services\certificate\CertificateServiceV2;
 use App\Services\recognition\RecognitionReadService;
 use Illuminate\Support\Facades\Log;
 
 class CertificateController extends Controller
 {
     protected CertificateService $certificateService;
+    protected CertificateServiceV2 $certificateServiceV2;
     protected CertificateCache $certificateCache;
 
     protected RecognitionReadService $recognitionReadService;
 
     public function __construct(CertificateService     $certificateService,
+                                CertificateServiceV2   $certificateServiceV2,
                                 CertificateCache       $certificateCache,
                                 RecognitionReadService $recognitionReadService)
     {
         $this->certificateService = $certificateService;
+        $this->certificateServiceV2 = $certificateServiceV2;
         $this->certificateCache = $certificateCache;
         $this->recognitionReadService = $recognitionReadService;
     }
@@ -76,6 +81,40 @@ class CertificateController extends Controller
             });
 
             $filename = "$data[employeeName]-certificate.pdf";
+
+            /* double bracket for a proper return type as an array, example: data : [] */
+            return ResponseFormat::success('Certificate generated successfully', [[
+                'filename' => $filename,
+                'url' => $pdfUrl
+            ]]);
+
+        } catch (\Exception $e) {
+            return response($e->getMessage(), 400);
+        }
+    }
+
+
+    /**
+     * @throws RecognitionServiceException
+     */
+    public function generateRecognitionCertificateWithData(CertificateMetadataRequest $request)
+    {
+        $request = $request->validated();
+        Log::info($request);
+
+        try {
+            // Get PDF binary content (string)
+            $pdfUrl = $this->certificateCache->getRecognitionCert($request['id'], function () use ($request) {
+                try {
+                    return $this->certificateServiceV2->searchCertificate($request, MinioBucket::CERTIFICATE);
+                } catch (CertificateServiceException $e) {
+                    Log::info($e->getMessage() . "Prepare to generate new certificate");
+                    $pdf = $this->certificateServiceV2->generateRecognitionCertificate($request);
+                    return $this->certificateServiceV2->saveRecognitionCertificate($pdf, $request);
+                }
+            });
+
+            $filename = "$request[employeeName]-certificate.pdf";
 
             /* double bracket for a proper return type as an array, example: data : [] */
             return ResponseFormat::success('Certificate generated successfully', [[

@@ -32,19 +32,6 @@ class Recognition extends Model
         'recognition_date' => 'date'
     ];
 
-    // Recognition Types  ========================== //
-    public function milestone()
-    {
-        return $this->hasOne(RecognitionMilestone::class, 'recognition_id', 'id');
-    }
-
-    public function academic()
-    {
-        return $this->hasOne(RecognitionAcademic::class, 'recognition_id', 'id');
-    }
-
-    // ============================================= //
-
     public function files()
     {
         return $this->hasMany(RecognitionFile::class, 'recognition_id', 'id');
@@ -53,6 +40,11 @@ class Recognition extends Model
     public function images()
     {
         return $this->hasMany(RecognitionImage::class, 'recognition_id', 'id');
+    }
+
+    public function certificates()
+    {
+        return $this->hasOne(RecognitionCertificate::class, 'recognition_id', 'id');
     }
 
     public function toApproved(): static
