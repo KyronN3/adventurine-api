@@ -16,6 +16,7 @@ class EventParticipant extends Model
         'employee_control_no',
         'employee_name',
         'event_name',
+        'total_nominated',
         'is_training'
     ];
 

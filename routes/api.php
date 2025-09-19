@@ -53,7 +53,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         //Nominate Participant routes
         Route::prefix('/event')->group(function () {
             Route::post('/nominate', [EventController::class, 'nominateEventParticipant']);
-            Route::match(['put', 'patch'], '/update/{id}', [EventController::class, 'updateEvent']);
         });
 
         // Recognition routes

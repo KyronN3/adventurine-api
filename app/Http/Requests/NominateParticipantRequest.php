@@ -25,15 +25,15 @@ class NominateParticipantRequest extends FormRequest
     {
         return [
             'nominated' => 'bail|required|array',
+            'nominated.*.total_nominated' => 'bail|required|integer|min:1',
             'nominated.*.event_id' => 'bail|required|integer|exists:ldrEvents,id',
             'nominated.*.is_training' => 'bail|required|boolean',
             'nominated.*.event_name' => 'bail|required|string|exists:ldrEvents,event_name',
-            'nominated.*.employee_control_no' => 'bail|required|digits:6|exists:vwActive,ControlNo|unique:ldrEvent_participants,employee_control_no',
+            'nominated.*.employee_control_no' => 'bail|required|digits:6|exists:vwActive,ControlNo',
             'nominated.*.employee_name' => 'bail|required|string',
             'nominated.*.created_at' => 'required|date:Y-m-d H:i:s',
             'nominated.*.updated_at' => 'required|date:Y-m-d H:i:s',
         ];
-
     }
 
     /**
@@ -42,10 +42,10 @@ class NominateParticipantRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-
         $transform = [];
         foreach ($this->input('nominated') as $participant => $key) {
             $transform[] = [
+                'total_nominated' => $key['totalNominated'] ?? '',
                 'employee_control_no' => $key['controlNo'] ?? '',
                 'employee_name' => $key['employeeName'] ?? '',
                 'event_name' => $key['eventName'] ?? '',
@@ -73,9 +73,10 @@ class NominateParticipantRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'employee_control_no.unique' => 'Employee Control No Already Exists',
-            'employee_control_no.exists' => 'Employee does not exist',
-            'event_id.exists' => 'Event Does not exist',
+            'nominated.*.employee_control_no.unique' => 'Employee Control No Already Exists',
+            'nominated.*.employee_control_no.exists' => 'Employee does not exist',
+            'nominated.*.event_id.exists' => 'Event Does not exist',
+            'nominated.*.event_name.exists' => 'Event Name does not exist',
         ];
     }
 

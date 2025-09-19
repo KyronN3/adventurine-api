@@ -67,10 +67,10 @@ class EventController extends Controller
     public function nominateEventParticipant(NominateParticipantRequest $request): JsonResponse
     {
         try {
-            $validatedData = $request->validated();
-            $response = $this->nominateParticipantService->nominateParticipant($validatedData);
 
-            return ResponseFormat::creationSuccess('Nominated Participants successfully!', Auth::user()->hasRole('hr') ? 'hr' : 'admin', now(), $response, 201);
+            $participantData = $request->validated();
+            $response = $this->nominateParticipantService->nominateParticipant($participantData);
+            return ResponseFormat::creationSuccess('Events Verified. Nominated Participants successfully!. ', Auth::user()->hasRole('hr') ? 'hr' : 'admin', now(), $response, 201);
         } catch (\Exception $e) {
             return ResponseFormat::error('Error nominating participants: ' . $e->getMessage(), 500);
         }
