@@ -41,6 +41,16 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('ldrRecognition_certification', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('recognition_id')->constrained('ldrRecognitions')->onDelete('cascade');
+            $table->string('name');
+            $table->string('citation');
+            $table->string('title');
+            $table->string('description');
+            $table->string('issue');
+            $table->timestamps();
+        });
     }
 
     /**

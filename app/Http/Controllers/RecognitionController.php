@@ -99,6 +99,13 @@ class RecognitionController extends Controller
         }
     }
 
+    /* Recognition websocket */
+    /* Implement it later */
+    public function websocketRecognition($id): JsonResponse
+    {
+        return ResponseFormat::success('Recognition websocket');
+    }
+
 
     /// READ-ONLY FUNCTIONS
     public function getRecognitions(): JsonResponse
