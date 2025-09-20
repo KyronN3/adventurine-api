@@ -43,10 +43,13 @@ class EventService
     {
         try {
             return Event::with(['outcomes', 'attendance', 'participants'])
-                ->where('event_status', 'completed')->orderBy('event_schedule', 'desc')->get();
+                ->whereIn('event_verify', ['verified', 'unverified'])
+                ->whereRaw("JSON_VALUE(event_schedule, '$[0].date') < ?", [now()->format('Y-m-d')])
+                ->orderByRaw("JSON_VALUE(event_schedule, '$[0].date') DESC")
+                ->get();
         } catch (\Exception $e) {
 
-            throw new EventServiceException('Failed to retrieve completed events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
+            throw new EventServiceException('Failed to retrieve past events: ' . $e->getMessage(), '', $e->getCode(), $e->getPrevious());
         }
     }
 
