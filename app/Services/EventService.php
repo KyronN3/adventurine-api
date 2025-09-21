@@ -236,4 +236,32 @@ class EventService
             throw new EventServiceException('Failed to check for existing events: ' . $e->getMessage());
         }
     }
+
+    public function submitAttendance($data)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Check if attendance already exists for this event and email
+            $existingAttendance = \App\Models\EventAttendance::where('event_id', $data['event_id'])
+                ->where('email', $data['email'])
+                ->first();
+
+            if ($existingAttendance) {
+                // Update existing attendance
+                $existingAttendance->update($data);
+                $attendance = $existingAttendance;
+            } else {
+                // Create new attendance
+                $attendance = \App\Models\EventAttendance::create($data);
+            }
+
+            DB::commit();
+
+            return $attendance;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new EventServiceException('Failed to submit attendance: ' . $e->getMessage());
+        }
+    }
 }

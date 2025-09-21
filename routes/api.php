@@ -32,6 +32,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Event routes
         Route::prefix('/event')->group(function () {
             Route::post('/create', [EventController::class, 'createNewEvent']);
+            Route::post('/attendance', [EventController::class, 'submitAttendance']);
             Route::delete('/delete/{id}', [EventController::class, 'destroy']);
         });
 

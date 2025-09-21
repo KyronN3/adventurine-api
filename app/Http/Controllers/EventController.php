@@ -6,6 +6,7 @@ use App\Components\ResponseFormat;
 use App\Exceptions\EventServiceException;
 use App\Http\Requests\CreateEventRequest;
 use App\Http\Requests\NominateParticipantRequest;
+use App\Http\Requests\SubmitAttendanceRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Services\EventService;
 use App\Services\mapper\ResponseData;
@@ -174,6 +175,19 @@ class EventController extends Controller
             return ResponseFormat::error($e->getMessage(), 404);
         } catch (\Exception $e) {
             return ResponseFormat::error('Error retrieving event: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function submitAttendance(SubmitAttendanceRequest $request): JsonResponse
+    {
+        try {
+            $validatedData = $request->validated();
+            $response = $this->service->submitAttendance($validatedData);
+            return ResponseFormat::success('Attendance submitted successfully', $response);
+        } catch (EventServiceException $e) {
+            return ResponseFormat::error($e->getMessage(), 400);
+        } catch (\Exception $e) {
+            return ResponseFormat::error('Error submitting attendance: ' . $e->getMessage(), 500);
         }
     }
 
