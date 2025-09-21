@@ -41,6 +41,7 @@ class RouteRoleVerifier
                         ['path' => '/create-event', 'component' => '/src/pages/trainingEvents/hr/CreateEventPage.vue', 'name' => 'createEvent',],
                         ['path' => '/events-page', 'component' => '/src/pages/trainingEvents/EventsPage.vue', 'name' => 'eventsPage',],
                         ['path' => '/events/:id', 'component' => '/src/pages/trainingEvents/hr/EventDetail.vue', 'name' => 'eventDetail',],
+                        ['path' => '/events/:id/attendance', 'component' => '/src/pages/trainingEvents/hr/AttendancePage.vue', 'name' => 'eventAttendance',],
                         ['path' => '/bpm-archive', 'component' => '/src/pages/bloodPressure/BPMArchivePage.vue', 'name' => 'bpmArchive',],
                         ['path' => '/pending-recognitions', 'component' => '/src/pages/recognition/PendingRecognitionsPage.vue', 'name' => 'pendingRecognitions',],
                         ['path' => '/recognition-history', 'component' => '/src/pages/recognition/RecognitionHistoryPage.vue', 'name' => 'recognitionHistory',],
